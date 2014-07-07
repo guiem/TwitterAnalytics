@@ -20,3 +20,16 @@ polyline{
 }
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+html { 
+	overflow-y:scroll; 
+}
+		
+body { 
+	padding-top:50px; 
+}
+        
+.span3 {
+ 	height: 200px !important;
+    overflow: scroll;
+}

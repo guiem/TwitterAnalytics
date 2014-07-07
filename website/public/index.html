@@ -7,21 +7,13 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
 
-	<title>Expdem's Tweet Analysis</title>
+	<title>Twitter Analytics</title>
 
 	<!-- SCROLLS -->
 	<!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">--><!-- load bootstrap -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
-	<style>
-		html 					{ overflow-y:scroll; }
-		body 					{ padding-top:50px; }
-        .span3 {
-            height: 200px !important;
-            overflow: scroll;
-        }
-	</style>
 
 	<!-- SPELLS -->
     
@@ -39,7 +31,7 @@
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="js/charts/wordcloud2.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
+    <script src="bower_components/angular-translate/angular-translate.js"></script>
     
     <!--<script data-require="angular-ui-bootstrap@0.3.0" data-semver="0.3.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.3.0.min.js"></script>-->
 
@@ -49,11 +41,15 @@
 <body ng-controller="mainController">
 	<div class="container">
 
-        
-         <ul class="nav nav-pills">
-            <li class="active"><a href="#">Diversidad Funcional</a></li>
-            <li><a href="http://localhost:8081">VI - Europeas 2014</a></li>
-        </ul>
+        <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+            <span translate="DROPDOWN_PROYECTOS"></span>
+            <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+            </ul>
+        </div>
         
 		<!-- HEADER AND CURRENT TWITTERS COUNT -->
 		<div class="jumbotron text-center">
