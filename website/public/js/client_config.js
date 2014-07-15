@@ -1,0 +1,1 @@
+var ga_tracking_code = 'XX-XXXXXXX-X'; // Google Analytics code
