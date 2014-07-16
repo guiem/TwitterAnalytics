@@ -2,6 +2,14 @@ from settings import *
 import os
 import datetime
 
+if UPDATE_WORD_CLOUD:
+	print 'Updating Word Cloud...'
+	os.system('python ../twitterTools/create_ngrams.py')
+	print 'Word Cloud updated.'
+if UPDATE_HASHTAGS:
+	print 'Updating Hashtags...'
+	os.system('python ../twitterTools/create_nhashtags.py')
+	print 'Hashtags updated.'
 print 'Dumping database...'
 os.system('mongodump --db twitter')
 print 'Dump finished.'
