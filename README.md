@@ -8,7 +8,7 @@ Set of tools to retrieve & visualize tweets.
 #####Visualitzation:
 - MEAN (MongoDB, Express, AngularJS and Node.js) *<-- to explore a bit*
 
-###Retrieval utilities:
+#####Retrieval utilities:
 - Python *<-- just familiar with Python*
 
 ####B)Dependencies
