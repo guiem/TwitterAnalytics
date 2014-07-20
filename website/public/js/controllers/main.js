@@ -70,18 +70,45 @@ angular.module('expdemController', ['ui.bootstrap'])
             });
         
         $scope.blackList = [":","@","http","el","la","de","en","y","los","''","a","``",".","sobre","por","con","para","rt","las","!","no","que","una","un","l","|","san","s","tel","es","se","al","su","-","scoopit","del","d","amb","i","te","lo","e","24","per","https",")","(","o","diversidad","funcional","diversidadfuncional","funcional."];
-        Words.getNGrams($scope.blackList)
-        .then(function(data) {
-            $scope.ngrams = data;
+
+        /* Word Cloud */
+
+        // Watching the change of maxWords field to update the cloud
+        $scope.$watch('maxWords', function(newVal, oldVal) {
+            Words.getNGrams($scope.blackList,$scope.maxWords)
+            .then(function(data) {
+                $scope.nGrams = data;
+                changeMaxWordsChart();
+            });
         });
-                
-                
-                $scope.getNGramsUpdate = function() {
-                Words.getNGrams($scope.blackList)
-                .then(function(data) {
-                      $scope.ngrams = data;
-                      });
-                };
+
+        // Function to update the number of words in the cloud we want to retrieve once filter file has changed
+        $scope.getNGramsUpdate = function() {
+            Words.getNGrams($scope.blackList,$scope.maxWords)
+            .then(function(data) {
+                $scope.nGrams = data;
+                changeMaxWordsChart();
+            });
+        };
+
+        // Updating chart with max words
+        function changeMaxWordsChart(numWords){
+            var wordsData = [];
+            var usersBlackList = [];
+            angular.forEach($scope.usernames, function(res) {
+                usersBlackList.push(res.screen_name);
+            });
+            var maxCount = 0;
+            angular.forEach($scope.nGrams, function(res) {
+                maxCount = Math.max(maxCount,res.count);
+                var isUser = usersBlackList.indexOf(res.word);
+                if(isUser == -1)
+                    wordsData.push([res.word, res.count*100/maxCount]);
+            });
+            WordCloud(document.getElementById('word-cloud-chart'), { list: wordsData } );
+        }
+
+        /* End of Word Cloud */
                 
         HashTags.getNHashtags()
         .success(function(data){
@@ -117,34 +144,6 @@ angular.module('expdemController', ['ui.bootstrap'])
             else
                 changeMaxTwittersChart($scope.maxTweeters);
         };
-                
-        function changeMaxWordsChart(numWords){
-            var wordsData = [];
-            var usersBlackList = [];
-            angular.forEach($scope.usernames, function(res) {
-                usersBlackList.push(res.screen_name);
-            });
-            var count = 0;
-            var maxCount = 0;
-            angular.forEach($scope.ngrams, function(res) {
-                count += 1;
-                if (count > numWords){
-                    return;
-                }
-                maxCount = Math.max(maxCount,res.count);
-                var isUser = usersBlackList.indexOf(res.word);
-                if(isUser == -1)
-                    wordsData.push([res.word, res.count*100/maxCount]);
-            });
-            WordCloud(document.getElementById('word-cloud-chart'), { list: wordsData } );
-        }
-                
-                $scope.changeMaxWords = function() {
-                if (!$scope.maxWords)
-                changeMaxWordsChart(50);
-                else
-                changeMaxWordsChart($scope.maxWords);
-                };
                 
         $scope.changeMaxHashTags = function() {
             if (!$scope.maxHashTags)

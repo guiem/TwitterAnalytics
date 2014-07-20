@@ -127,24 +127,23 @@ module.exports = function(app) {
         });
     });
     
-    // get count words
-	app.get('/api/ngrams/:terms', function(req, res) {
-            var blackList = req.params.terms.split(',');
-            blackList.push("#");
-            blackList.push("?");
-            blackList.push(",");
-            blackList.push("%");
-            blackList.push("...");
-            // db.words.find({word:{$nin:blackList}}).sort( { count: -1 } )
-            Word
-            .find({word:{$nin:blackList}})
-            //.limit(1000)
-            .sort('-count')
-            .exec(function(err,word){
-                  if (err)
-                    res.send(err);
-                  res.json(word);
-            });
+    // get num words for WordCloud
+	app.get('/api/ngrams/:terms/:numWords', function(req, res) {
+        var blackList = req.params.terms.split(',');
+        blackList.push("#");
+        blackList.push("?");
+        blackList.push(",");
+        blackList.push("%");
+        blackList.push("...");
+        Word
+        .find({word:{$nin:blackList}})
+        .limit(req.params.numWords)
+        .sort('-count')
+        .exec(function(err,word){
+            if (err)
+                res.send(err);
+            res.json(word);
+        });
     });
     
     // get count words
