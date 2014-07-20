@@ -1,11 +1,16 @@
 angular.module('hashtagService', [])
 
-	// super simple service
-	// each function returns a promise object 
-	.factory('HashTags', function($http) {
+	.factory('HashTags', function($http,$q) {
 		return {
-			getNHashtags : function() {
-				return $http.get('/api/nhashtags');
+			getNHashtags : function(numHashTags) {
+				var deferred = $q.defer();
+                if (!numHashTags)
+                    numHashTags = 50;
+				$http({method:"GET",url:'/api/nhashtags/'+numHashTags})
+                .success(function(result){
+                    deferred.resolve(result);
+                });
+                return deferred.promise;
 			},
 		}
 	});

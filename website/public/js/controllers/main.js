@@ -92,7 +92,7 @@ angular.module('expdemController', ['ui.bootstrap'])
         };
 
         // Updating chart with max words
-        function changeMaxWordsChart(numWords){
+        function changeMaxWordsChart(){
             var wordsData = [];
             var usersBlackList = [];
             angular.forEach($scope.usernames, function(res) {
@@ -109,11 +109,35 @@ angular.module('expdemController', ['ui.bootstrap'])
         }
 
         /* End of Word Cloud */
-                
-        HashTags.getNHashtags()
-        .success(function(data){
-            $scope.nhashtags = data;
+
+        /* Hash Tag Cloud */
+
+        // Watching the change of maxWords field to update the cloud
+        $scope.$watch('maxHashTags', function(newVal, oldVal) {
+            HashTags.getNHashtags($scope.maxHashTags)
+            .then(function(data) {
+                $scope.nHashtags = data;
+                changeMaxHashTagsChart();
+            });
         });
+
+        function changeMaxHashTagsChart(){
+            var wordsData = [];
+            var usersBlackList = [];
+            angular.forEach($scope.usernames, function(res) {
+                usersBlackList.push(res.screen_name);
+            });
+            var maxCount = 0;
+            angular.forEach($scope.nHashtags, function(res) {
+                maxCount = Math.max(maxCount,res.count);
+                var isUser = usersBlackList.indexOf(res.word);
+                if(isUser == -1)
+                    wordsData.push([res.hashtag, res.count*100/maxCount]);
+                });
+            WordCloud(document.getElementById('word-cloud-chart-hashtags'), { list: wordsData } );
+        }
+
+        /* End of Hash Tag Cloud */
                 
         Users.getTotalUsers()
             .success(function(data) {
@@ -144,35 +168,6 @@ angular.module('expdemController', ['ui.bootstrap'])
             else
                 changeMaxTwittersChart($scope.maxTweeters);
         };
-                
-        $scope.changeMaxHashTags = function() {
-            if (!$scope.maxHashTags)
-                changeMaxHashTagsChart(50);
-            else
-                changeMaxHashTagsChart($scope.maxHashTags);
-        };
-                
-        function changeMaxHashTagsChart(numWords){
-                var wordsData = [];
-                var usersBlackList = [];
-                angular.forEach($scope.usernames, function(res) {
-                                usersBlackList.push(res.screen_name);
-                                });
-                var count = 0;
-                var maxCount = 0;
-                angular.forEach($scope.nhashtags, function(res) {
-                                count += 1;
-                                if (count > numWords){
-                                return;
-                                }
-                                maxCount = Math.max(maxCount,res.count);
-                                var isUser = usersBlackList.indexOf(res.word);
-                                if(isUser == -1)
-                                wordsData.push([res.hashtag, res.count*100/maxCount]);
-                                });
-                WordCloud(document.getElementById('word-cloud-chart-hashtags'), { list: wordsData } );
-                }
-
                 
 		$scope.formData = {};
 		$scope.loading = true;

@@ -146,20 +146,19 @@ module.exports = function(app) {
         });
     });
     
-    // get count words
-	app.get('/api/nhashtags', function(req, res) {
-            var blackList = ["#diversidadfuncional"];
-            // db.words.find({word:{$nin:blackList}}).sort( { count: -1 } )
-            HashTag
-            .find({hashtag:{$nin:blackList}})
-            //.limit(1000)
-            .sort('-count')
-            .exec(function(err,hashtag){
-                  if (err)
-                  res.send(err);
-                  res.json(hashtag);
-                  });
-            });
+    // get num words for HashTagCloud
+	app.get('/api/nhashtags/:numHashTags', function(req, res) {
+        var blackList = ["#diversidadfuncional"];
+        HashTag
+        .find({hashtag:{$nin:blackList}})
+        .limit(req.params.numHashTags)
+        .sort('-count')
+        .exec(function(err,hashtag){
+            if (err)
+                res.send(err);
+            res.json(hashtag);
+        });
+    });
     
     // get tweets by screen_name
 	app.get('/api/usertweets/:screen_name', function(req, res) {
