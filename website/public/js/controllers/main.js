@@ -68,14 +68,45 @@ angular.module('expdemController', ['ui.bootstrap'])
             .success(function(data){
                 $scope.tweetsperuser = data;
             });
-        
-        $scope.blackList = [":","@","http","el","la","de","en","y","los","''","a","``",".","sobre","por","con","para","rt","las","!","no","que","una","un","l","|","san","s","tel","es","se","al","su","-","scoopit","del","d","amb","i","te","lo","e","24","per","https",")","(","o","diversidad","funcional","diversidadfuncional","funcional."];
 
+        // TODO: avoid duplicate code from routes.js
+        // Basic characters filter based on this url: http://www.skorks.com/2010/05/what-every-developer-should-know-about-urls/
+        var reservedCharacters = [";", "/", "?", ":", "@", "&", "=", "+", "$", ","];
+        var unreservedCharacters = ["-", "_", ".", "!", "~", "*", "'", "(", ")"];
+        var unwiseCharacters = ["{", "}", "|", "\"", "^", "[", "]", "`"];
+        var asciiCharacters = ["<", ">", "#", "%", '"'];
+        var personalCharacters = ["…",'“',"`","\"","``","''","..."];
+
+        $scope.fixedBlackList = reservedCharacters.concat(unreservedCharacters).concat(unwiseCharacters)
+        .concat(asciiCharacters).concat(personalCharacters);
+        
+        $scope.blackList = ["http","el","la","de","en","y","los","a","sobre","por","con","para","rt","las","no","que","una",
+        "un","l","san","s","tel","es","se","al","su","scoopit","del","d","amb","i","te","lo","e","24",
+        "per","https","o","diversidad","funcional","diversidadfuncional","funcional.","162","184","07","42"];
+        
         /* Word Cloud */
+
+        // aux function to substract two arrays
+        function arrayDiff(a,b){
+            var diff = [];
+            a.forEach(function(key) {
+                if (-1 === b.indexOf(key)) 
+                    diff.push(key);
+            });
+            return diff;
+        }
+
+        // aux function to format blacklist
+        function formatBlackList() {
+            var bl = $scope.blackList;
+            if (typeof $scope.blackList === 'string')
+                bl = $scope.blackList.split(',');
+            return arrayDiff(bl,$scope.fixedBlackList);
+        }
 
         // Watching the change of maxWords field to update the cloud
         $scope.$watch('maxWords', function(newVal, oldVal) {
-            Words.getNGrams($scope.blackList,$scope.maxWords)
+            Words.getNGrams(JSON.stringify(formatBlackList()),$scope.maxWords)
             .then(function(data) {
                 $scope.nGrams = data;
                 changeMaxWordsChart();
@@ -84,7 +115,7 @@ angular.module('expdemController', ['ui.bootstrap'])
 
         // Function to update the number of words in the cloud we want to retrieve once filter file has changed
         $scope.getNGramsUpdate = function() {
-            Words.getNGrams($scope.blackList,$scope.maxWords)
+            Words.getNGrams(JSON.stringify(formatBlackList()),$scope.maxWords)
             .then(function(data) {
                 $scope.nGrams = data;
                 changeMaxWordsChart();

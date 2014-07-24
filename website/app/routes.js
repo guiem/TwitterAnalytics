@@ -127,14 +127,18 @@ module.exports = function(app) {
         });
     });
     
+    // Basic characters filter based on this url: http://www.skorks.com/2010/05/what-every-developer-should-know-about-urls/
+    var reservedCharacters = [";", "/", "?", ":", "@", "&", "=", "+", "$", ","];
+    var unreservedCharacters = ["-", "_", ".", "!", "~", "*", "'", "(", ")"];
+    var unwiseCharacters = ["{", "}", "|", "\"", "^", "[", "]", "`"];
+    var asciiCharacters = ["<", ">", "#", "%", '"'];
+    var personalCharacters = ["…",'“',"`","\"","``","''","..."];
+
     // get num words for WordCloud
 	app.get('/api/ngrams/:terms/:numWords', function(req, res) {
-        var blackList = req.params.terms.split(',');
-        blackList.push("#");
-        blackList.push("?");
-        blackList.push(",");
-        blackList.push("%");
-        blackList.push("...");
+        var blackList = req.params.terms//.split(',');
+        var blackList = eval(req.params.terms).concat(reservedCharacters).concat(unwiseCharacters)
+        .concat(unreservedCharacters).concat(asciiCharacters).concat(personalCharacters);
         Word
         .find({word:{$nin:blackList}})
         .limit(req.params.numWords)
