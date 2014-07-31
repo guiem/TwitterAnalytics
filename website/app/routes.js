@@ -2,8 +2,26 @@ var TwitterUser = require('./models/twitterUser');
 var Tweet = require('./models/tweet');
 var Word = require('./models/word');
 var HashTag = require('./models/hashtag');
+var Project = require('./models/project');
 
 module.exports = function(app) {
+
+    /* PROJECTS */
+
+    // list all projects
+    app.get('/api/projects', function(req, res) {
+        Project
+        .find()
+        .select('title name')
+        .exec(function(err, projects) {
+            if (err) {
+                res.send(err);
+            } 
+            res.json(projects); 
+        });
+    });
+
+    /* END PROJECTS */
 	
 	// get all users
 	app.get('/api/users', function(req, res) {

@@ -16,8 +16,21 @@ angular.module('expdemController', ['ui.bootstrap'])
         }
     })
 
-	.controller('mainController', function($scope, $filter, $http,$sce, Users, Tweets, Words, HashTags) {
-                
+	.controller('mainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects) {
+              
+        /* PROJECTS */
+
+        // List of available projects
+        Projects.getProjects()
+        .then(function(data) {
+            $scope.projects = data;
+            if ($scope.projects.length > 0) {
+                $scope.currentProject = $scope.projects[0]; // initalizing current project in case no project is given
+            }
+        });        
+
+        /* END PROJECTS */
+
         Tweets.getMinDate()
         .success(function(data) {
             $scope.dtStart = new Date(data[0].created_at_dt);

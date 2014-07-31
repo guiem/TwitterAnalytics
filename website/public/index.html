@@ -22,9 +22,10 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script src="js/controllers/main.js"></script> <!-- load up our controller -->
     <script src="js/services/users.js"></script> <!-- load our users service -->
-    <script src="js/services/tweets.js"></script> <!-- load our teets service -->
-    <script src="js/services/words.js"></script> <!-- load our teets service -->
-    <script src="js/services/hashtags.js"></script> <!-- load our teets service -->
+    <script src="js/services/tweets.js"></script> <!-- load our tweets service -->
+    <script src="js/services/words.js"></script> <!-- load our words service -->
+    <script src="js/services/hashtags.js"></script> <!-- load our hashtags service -->
+    <script src="js/services/projects.js"></script> <!-- load our projects service -->
     <script src="js/charts/tweetsperday.js"></script>
 	<script src="js/core.js"></script> <!-- load our main application -->
     <script src="js/ui-bootstrap-tpls-0.11.0.min.js"></script>
@@ -51,22 +52,16 @@
 <!-- SET THE CONTROLLER -->
 <body ng-controller="mainController">
 	<div class="container">
-
-        <!--
-        <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+        
+        <div>
             <span translate="DROPDOWN_PROYECTOS"></span>
-            <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
-            </ul>
+            <select class="btn btn-default dropdown-toggle" ng-model="currentProject" ng-options="project.title for project in projects">
+            </select>
         </div>
-        -->
         
 		<!-- HEADER AND CURRENT TWITTERS COUNT -->
 		<div class="jumbotron text-center">
-			<h2>Tweets : Diversidad Funcional</h2>
+			<h2>Tweets : {{currentProject.title}}</h2>
 		</div>
         <!-- General DATA -->
         <div class="panel panel-default">
