@@ -8,4 +8,4 @@ var TwitterUser = new Schema({
 	since_id : Number,
 });
 
-module.exports = mongoose.model('TwitterUser', TwitterUser,'users_df');
+module.exports = mongoose.model('TwitterUser', TwitterUser,'users');

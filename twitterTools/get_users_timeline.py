@@ -21,8 +21,8 @@ t = Twitter(
 # connect to mongo
 connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
 db=connection.twitter
-tweets = eval("db.tweets{0}".format(TWEETS_SUFIX))
-users = eval("db.users{0}".format(USERS_SUFIX))
+tweets = db.tweets
+users = db.users
 
 def get_timeline(screen_name, since_id = False):
     try:
@@ -42,6 +42,7 @@ def get_timeline(screen_name, since_id = False):
             todo = not (len(response) < TIMELINE_COUNT)
             for tweet in response:
                 tweet_id = tweet['id']
+                tweet['twitteranalytics_project_id'] = PROJECT_ID
                 if (not TIMELINE_KEYWORDS or contains_keywords(tweet['text'].encode('utf-8'))) and tweets.find({"id":tweet['id'] }).count() == 0:
                     dt = datetime.datetime.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y')
                     tweet['created_at_dt'] = dt

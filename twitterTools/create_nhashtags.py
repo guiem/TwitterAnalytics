@@ -8,9 +8,9 @@ import time
 # connect to mongo
 connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
 db=connection.twitter
-tweets = eval("db.tweets{0}".format(TWEETS_SUFIX))
-db.drop_collection("hashtags{0}".format(WORDS_SUFIX))
-hashtags = eval("db.hashtags{0}".format(HASHTAGS_SUFIX))
+tweets = db.tweets
+db.drop_collection(hashtags)
+hashtags = db.hashtags
 
 tweets_processed = 0
 res = {}
@@ -25,6 +25,6 @@ for tweet in tweets.find():
     print """Total: {0}""".format(tweets_processed)
 hashtags_db = 0
 for i,k in enumerate(res):
-    hashtags.insert({"hashtag":k,"count":res[k]})
+    hashtags.insert({"hashtag":k,"count":res[k],"twitteranalytics_project_id": PROJECT_ID})
     print """Total hashtags db: {0}""".format(i+1)
 

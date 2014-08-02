@@ -1,5 +1,7 @@
 import datetime
 
+PROJECT_ID = your project id here
+
 # TwitterSearch params
 CONSUMER_KEY = 'YOUR CONSUMER KEY'
 CONSUMER_SECRET = 'YOUR CONSUMER SECRET'

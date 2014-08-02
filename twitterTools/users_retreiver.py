@@ -26,7 +26,7 @@ try:
     # connect to mongo
     connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
     db=connection.twitter
-    users = eval("db.users{0}".format(USERS_SUFIX))
+    users = db.users
     new_users = 0
     response = ts.searchTweetsIterable(tso)
     for tweet in response: # this is where the fun actually starts :)
@@ -39,7 +39,7 @@ try:
             time.sleep(sleep)
         #tweets.insert(tweet)
         if users.find({"screen_name": tweet['user']['screen_name']}).count() == 0:
-            users.insert({"screen_name":tweet['user']['screen_name'],"processed":"no","created_at":datetime.datetime.utcnow()})
+            users.insert({"screen_name":tweet['user']['screen_name'],"processed":"no","created_at":datetime.datetime.utcnow(),"twitteranalytics_project_id": PROJECT_ID})
             new_users += 1
         print tweet['user']['screen_name'],tweet['created_at'],count
         count += 1
