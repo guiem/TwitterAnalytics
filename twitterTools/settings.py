@@ -20,13 +20,6 @@ START_DATE = False # careful because it takes UTC times
 END_DATE = False
 EXCLUDE_REPLIES = True
 
-# DATABASE
-DB_URL = 'localhost'
-TWEETS_SUFIX = '_whatever' # if you collect tweets by term 'whatever' you'll find your tweets in the database stored in a collection called tweets_whatever
-USERS_SUFIX = '_whatever'
-WORDS_SUFIX = '_whatever'
-HASHTAGS_SUFIX = '_whatever'
-
 USERS_FILE_PATH = 'None'
 
 try:
