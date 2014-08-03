@@ -1,14 +1,12 @@
 angular.module('userService', [])
 
-	// super simple service
-	// each function returns a promise object 
 	.factory('Users', function($http) {
 		return {
-			getTotalUsers : function() {
-				return $http.get('/api/totalusers');
+			getTotalUsers : function(projectId) {
+				return $http.get('/api/projects/'+projectId+'/totalusers');
 			},
-            getUserNames : function() {
-                return $http.get('/api/usernames');
+            getUserNames : function(projectId) {
+                return $http.get('/api/projects/'+projectId+'/usernames');
             }
 		}
 	});

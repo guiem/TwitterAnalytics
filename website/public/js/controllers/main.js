@@ -18,8 +18,10 @@ angular.module('expdemController', ['ui.bootstrap'])
 
 	.controller('mainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects) {
               
-        $scope.formData = {}; // TODO: check if needed
         $scope.loading = true;
+        $scope.formData = {}; // TODO: check if needed
+        $scope.formats = ['dd/MM/yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+        $scope.format = $scope.formats[0];
 
         function initData(){
             /* TWEETS */
@@ -58,6 +60,26 @@ angular.module('expdemController', ['ui.bootstrap'])
                 $scope.dtEnd = new Date(data[0].created_at_dt);
             });
             /* END TWEETS */
+
+            /* HASHTAGS */
+            updateHashtags();
+            /* END HASHTAGS */
+
+            /* WORDS */
+            updateWords();
+            /* END WORDS */
+
+            /* USERS */
+            Users.getTotalUsers($scope.currentProject.name)
+            .success(function(data) {
+                $scope.totalusers = data;
+            });
+                
+            Users.getUserNames($scope.currentProject.name)
+            .success(function(data) {
+                $scope.usernames = data;
+            });
+            /* END USERS */
 
         }
               
@@ -139,6 +161,117 @@ angular.module('expdemController', ['ui.bootstrap'])
         };
 
         /* END TWEETS */
+
+        /* HASHTAGS */
+
+        function updateHashtags(){
+            HashTags.getNHashtags($scope.currentProject.name,$scope.maxHashTags)
+            .then(function(data) {
+                $scope.nHashtags = data;
+                changeMaxHashTagsChart();
+            });    
+        }
+
+        // Watching the change of maxWords field to update the cloud
+        $scope.$watch('maxHashTags', function(newVal, oldVal) {
+            if ($scope.currentProject){
+                updateHashtags();   
+            }
+        });
+
+        function changeMaxHashTagsChart(){
+            var wordsData = [];
+            var usersBlackList = [];
+            angular.forEach($scope.usernames, function(res) {
+                usersBlackList.push(res.screen_name);
+            });
+            var maxCount = 0;
+            angular.forEach($scope.nHashtags, function(res) {
+                maxCount = Math.max(maxCount,res.count);
+                var isUser = usersBlackList.indexOf(res.word);
+                if(isUser == -1)
+                    wordsData.push([res.hashtag, res.count*100/maxCount]);
+                });
+            WordCloud(document.getElementById('word-cloud-chart-hashtags'), { list: wordsData } );
+        }
+
+        /* END HASHTAGS */
+
+        /* WORDS */
+
+        // TODO: avoid duplicate code from routes.js
+        // Basic characters filter based on this url: http://www.skorks.com/2010/05/what-every-developer-should-know-about-urls/
+        var reservedCharacters = [";", "/", "?", ":", "@", "&", "=", "+", "$", ","];
+        var unreservedCharacters = ["-", "_", ".", "!", "~", "*", "'", "(", ")"];
+        var unwiseCharacters = ["{", "}", "|", "\"", "^", "[", "]", "`"];
+        var asciiCharacters = ["<", ">", "#", "%", '"'];
+        var personalCharacters = ["…",'“',"`","\"","``","''","..."];
+
+        $scope.fixedBlackList = reservedCharacters.concat(unreservedCharacters).concat(unwiseCharacters)
+        .concat(asciiCharacters).concat(personalCharacters);
+        
+        $scope.blackList = ["http","el","la","de","en","y","los","a","sobre","por","con","para","rt","las","no","que","una",
+        "un","l","san","s","tel","es","se","al","su","scoopit","del","d","amb","i","te","lo","e","24",
+        "per","https","o","diversidad","funcional","diversidadfuncional","funcional.","162","184","07","42"];
+        
+        // aux function to substract two arrays
+        function arrayDiff(a,b){
+            var diff = [];
+            a.forEach(function(key) {
+                if (-1 === b.indexOf(key)) 
+                    diff.push(key);
+            });
+            return diff;
+        }
+
+        // aux function to format blacklist
+        function formatBlackList() {
+            var bl = $scope.blackList;
+            if (typeof $scope.blackList === 'string')
+                bl = $scope.blackList.split(',');
+            return arrayDiff(bl,$scope.fixedBlackList);
+        }
+
+        function updateWords(){
+            Words.getNGrams($scope.currentProject.name,JSON.stringify(formatBlackList()),$scope.maxWords)
+            .then(function(data) {
+                $scope.nGrams = data;
+                changeMaxWordsChart();
+            });
+        }
+
+        // Watching the change of maxWords field to update the cloud
+        $scope.$watch('maxWords', function(newVal, oldVal) {
+            if ($scope.currentProject){
+                updateWords();   
+            }   
+        });
+
+        // Function to update the number of words in the cloud we want to retrieve once filter file has changed
+        $scope.getNGramsUpdate = function() {
+            updateWords();
+        };
+
+        // Updating chart with max words
+        function changeMaxWordsChart(){
+            var wordsData = [];
+            var usersBlackList = [];
+            angular.forEach($scope.usernames, function(res) {
+                usersBlackList.push(res.screen_name);
+            });
+            var maxCount = 0;
+            angular.forEach($scope.nGrams, function(res) {
+                maxCount = Math.max(maxCount,res.count);
+                var isUser = usersBlackList.indexOf(res.word);
+                if(isUser == -1)
+                    wordsData.push([res.word, res.count*100/maxCount]);
+            });
+            WordCloud(document.getElementById('word-cloud-chart'), { list: wordsData } );
+        }
+
+        /* End of Word Cloud */
+
+        /* END WORDS */
                 
         $scope.datepickers = {
             dtStart: $scope.dtStart,
@@ -172,120 +305,6 @@ angular.module('expdemController', ['ui.bootstrap'])
             startingDay: 1,
             showWeeks: false,
         };
-                
-        $scope.formats = ['dd/MM/yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        $scope.format = $scope.formats[0];
-
-        // TODO: avoid duplicate code from routes.js
-        // Basic characters filter based on this url: http://www.skorks.com/2010/05/what-every-developer-should-know-about-urls/
-        var reservedCharacters = [";", "/", "?", ":", "@", "&", "=", "+", "$", ","];
-        var unreservedCharacters = ["-", "_", ".", "!", "~", "*", "'", "(", ")"];
-        var unwiseCharacters = ["{", "}", "|", "\"", "^", "[", "]", "`"];
-        var asciiCharacters = ["<", ">", "#", "%", '"'];
-        var personalCharacters = ["…",'“',"`","\"","``","''","..."];
-
-        $scope.fixedBlackList = reservedCharacters.concat(unreservedCharacters).concat(unwiseCharacters)
-        .concat(asciiCharacters).concat(personalCharacters);
-        
-        $scope.blackList = ["http","el","la","de","en","y","los","a","sobre","por","con","para","rt","las","no","que","una",
-        "un","l","san","s","tel","es","se","al","su","scoopit","del","d","amb","i","te","lo","e","24",
-        "per","https","o","diversidad","funcional","diversidadfuncional","funcional.","162","184","07","42"];
-        
-        /* Word Cloud */
-
-        // aux function to substract two arrays
-        function arrayDiff(a,b){
-            var diff = [];
-            a.forEach(function(key) {
-                if (-1 === b.indexOf(key)) 
-                    diff.push(key);
-            });
-            return diff;
-        }
-
-        // aux function to format blacklist
-        function formatBlackList() {
-            var bl = $scope.blackList;
-            if (typeof $scope.blackList === 'string')
-                bl = $scope.blackList.split(',');
-            return arrayDiff(bl,$scope.fixedBlackList);
-        }
-
-        // Watching the change of maxWords field to update the cloud
-        $scope.$watch('maxWords', function(newVal, oldVal) {
-            Words.getNGrams(JSON.stringify(formatBlackList()),$scope.maxWords)
-            .then(function(data) {
-                $scope.nGrams = data;
-                changeMaxWordsChart();
-            });
-        });
-
-        // Function to update the number of words in the cloud we want to retrieve once filter file has changed
-        $scope.getNGramsUpdate = function() {
-            Words.getNGrams(JSON.stringify(formatBlackList()),$scope.maxWords)
-            .then(function(data) {
-                $scope.nGrams = data;
-                changeMaxWordsChart();
-            });
-        };
-
-        // Updating chart with max words
-        function changeMaxWordsChart(){
-            var wordsData = [];
-            var usersBlackList = [];
-            angular.forEach($scope.usernames, function(res) {
-                usersBlackList.push(res.screen_name);
-            });
-            var maxCount = 0;
-            angular.forEach($scope.nGrams, function(res) {
-                maxCount = Math.max(maxCount,res.count);
-                var isUser = usersBlackList.indexOf(res.word);
-                if(isUser == -1)
-                    wordsData.push([res.word, res.count*100/maxCount]);
-            });
-            WordCloud(document.getElementById('word-cloud-chart'), { list: wordsData } );
-        }
-
-        /* End of Word Cloud */
-
-        /* Hash Tag Cloud */
-
-        // Watching the change of maxWords field to update the cloud
-        $scope.$watch('maxHashTags', function(newVal, oldVal) {
-            HashTags.getNHashtags($scope.maxHashTags)
-            .then(function(data) {
-                $scope.nHashtags = data;
-                changeMaxHashTagsChart();
-            });
-        });
-
-        function changeMaxHashTagsChart(){
-            var wordsData = [];
-            var usersBlackList = [];
-            angular.forEach($scope.usernames, function(res) {
-                usersBlackList.push(res.screen_name);
-            });
-            var maxCount = 0;
-            angular.forEach($scope.nHashtags, function(res) {
-                maxCount = Math.max(maxCount,res.count);
-                var isUser = usersBlackList.indexOf(res.word);
-                if(isUser == -1)
-                    wordsData.push([res.hashtag, res.count*100/maxCount]);
-                });
-            WordCloud(document.getElementById('word-cloud-chart-hashtags'), { list: wordsData } );
-        }
-
-        /* End of Hash Tag Cloud */
-                
-        Users.getTotalUsers()
-            .success(function(data) {
-                $scope.totalusers = data;
-        });
-                
-        Users.getUserNames()
-            .success(function(data) {
-                $scope.usernames = data;
-        });
         
         function changeMaxTwittersChart(numPeople){
             tweetsPerUserData = [];

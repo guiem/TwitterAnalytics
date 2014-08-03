@@ -177,79 +177,15 @@ module.exports = function(app) {
     });
 
     /* END TWEETS */
+
+    /* HASHTAGS */
 	
-	// get all users
-	app.get('/api/users', function(req, res) {
 
-		// use mongoose to get all users in the database
-		TwitterUser.find(function(err, users) {
-
-			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
-			if (err)
-				res.send(err)
-
-			res.json(users); // return all todos in JSON format
-		});
-	});
-	
-	// get number of users
-	app.get('/api/totalusers', function(req, res) {
-
-		// db.users.find().count()
-		TwitterUser.find().count(function(err, count) {
-
-			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
-			if (err)
-				res.send(err)
-
-			res.json(count); // return all todos in JSON format
-		});
-	});
-    
-    app.get('/api/usernames', function(req, res) {
-            
-            // db.users.find().count()
-            TwitterUser
-            .find()
-            .select('screen_name')
-            .exec(function(err, user) {
-                                     
-                // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                if (err)
-                    res.send(err)
-                                     
-                res.json(user); // return all todos in JSON format
-            });
-        });
-    
-    // Basic characters filter based on this url: http://www.skorks.com/2010/05/what-every-developer-should-know-about-urls/
-    var reservedCharacters = [";", "/", "?", ":", "@", "&", "=", "+", "$", ","];
-    var unreservedCharacters = ["-", "_", ".", "!", "~", "*", "'", "(", ")"];
-    var unwiseCharacters = ["{", "}", "|", "\"", "^", "[", "]", "`"];
-    var asciiCharacters = ["<", ">", "#", "%", '"'];
-    var personalCharacters = ["…",'“',"`","\"","``","''","..."];
-
-    // get num words for WordCloud
-	app.get('/api/ngrams/:terms/:numWords', function(req, res) {
-        var blackList = req.params.terms//.split(',');
-        var blackList = eval(req.params.terms).concat(reservedCharacters).concat(unwiseCharacters)
-        .concat(unreservedCharacters).concat(asciiCharacters).concat(personalCharacters);
-        Word
-        .find({word:{$nin:blackList}})
-        .limit(req.params.numWords)
-        .sort('-count')
-        .exec(function(err,word){
-            if (err)
-                res.send(err);
-            res.json(word);
-        });
-    });
-    
     // get num words for HashTagCloud
-	app.get('/api/nhashtags/:numHashTags', function(req, res) {
+    app.get('/api/projects/:projectId/nhashtags/:numHashTags', function(req, res) {
         var blackList = ["#diversidadfuncional"];
         HashTag
-        .find({hashtag:{$nin:blackList}})
+        .find({'twitteranalytics_project_id':req.params.projectId,hashtag:{$nin:blackList}})
         .limit(req.params.numHashTags)
         .sort('-count')
         .exec(function(err,hashtag){
@@ -258,10 +194,71 @@ module.exports = function(app) {
             res.json(hashtag);
         });
     });
-    
-    // and expression
-    //db.tweets_df.find( {$and:[{text: { $in: [/rt/i] }},{text: { $in: [/glossari/i]}}] }, {text:1,"user.screen_name":1} )
 
+    /* END HASHTAGS */
+
+    /* WORDS */
+
+    // Basic characters filter based on this url: http://www.skorks.com/2010/05/what-every-developer-should-know-about-urls/
+    var reservedCharacters = [";", "/", "?", ":", "@", "&", "=", "+", "$", ","];
+    var unreservedCharacters = ["-", "_", ".", "!", "~", "*", "'", "(", ")"];
+    var unwiseCharacters = ["{", "}", "|", "\"", "^", "[", "]", "`"];
+    var asciiCharacters = ["<", ">", "#", "%", '"'];
+    var personalCharacters = ["…",'“',"`","\"","``","''","..."];
+
+    // get num words for WordCloud
+    app.get('/api/projects/:projectId/ngrams/:terms/:numWords', function(req, res) {
+        var blackList = req.params.terms//.split(',');
+        var blackList = eval(req.params.terms).concat(reservedCharacters).concat(unwiseCharacters)
+        .concat(unreservedCharacters).concat(asciiCharacters).concat(personalCharacters);
+        Word
+        .find({'twitteranalytics_project_id':req.params.projectId,word:{$nin:blackList}})
+        .limit(req.params.numWords)
+        .sort('-count')
+        .exec(function(err,word){
+            if (err)
+                res.send(err);
+            res.json(word);
+        });
+    });
+
+    /* END WORDS */
+
+    /* USERS */
+
+	// get all users
+	app.get('/api/users', function(req, res) {
+		TwitterUser.find(function(err, users) {
+			if (err)
+				res.send(err)
+			res.json(users); 
+		});
+	});
+
+    // get number of users
+    app.get('/api/projects/:projectId/totalusers', function(req, res) {
+        TwitterUser.find({'twitteranalytics_project_id':req.params.projectId}).count(function(err, count) {
+            if (err)
+                res.send(err)
+
+            res.json(count);
+        });
+    });
+    
+    // get all usernames
+    app.get('/api/projects/:projectId/usernames', function(req, res) {
+        TwitterUser
+        .find({'twitteranalytics_project_id':req.params.projectId})
+        .select('screen_name')
+        .exec(function(err, user) {
+            if (err)
+                res.send(err)
+            res.json(user); 
+        });
+    });
+    
+    /* END USERS */
+    
 	// application -------------------------------------------------------------
 	app.get('*', function(req, res) {
 		res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
