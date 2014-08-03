@@ -4,50 +4,50 @@ angular.module('tweetService', [])
 	// each function returns a promise object 
 	.factory('Tweets', function($http,$q) {
 		return {
-			getTotalTweets : function() {
-				return $http.get('/api/totaltweets');
+			getTotalTweets : function(projectId) {
+				return $http.get('/api/projects/'+projectId+'/totaltweets');
 			},
-            getTotalRTweets : function() {
-                return $http.get('/api/totalrtweets');
+            getTotalRTweets : function(projectId) {
+                return $http.get('/api/projects/'+projectId+'/totalrtweets');
             },
-            getTweetsPerUser : function() {
-                return $http.get('/api/tweetsperuser');
+            getTweetsPerUser : function(projectId) {
+                return $http.get('/api/projects/'+projectId+'/tweetsperuser');
             },
-            getNumGeo: function() {
-                return $http.get('/api/numgeo');
+            getNumGeo: function(projectId) {
+                return $http.get('/api/projects/'+projectId+'/numgeo');
             },
-            getByUser: function(screen_name) {
+            getByUser: function(projectId,screen_name) {
                 var deferred = $q.defer();
-                $http.get('/api/usertweets/' + screen_name)
+                $http.get('/api/projects/'+projectId+'/usertweets/' + screen_name)
                 .success(function(result){
                     deferred.resolve(result);
                 });
                 return deferred.promise;
             },
-            getMinDate: function() {
-                return $http.get('/api/tweetmindate/');
+            getMinDate: function(projectId) {
+                return $http.get('/api/projects/'+projectId+'/tweetmindate/');
             },
-            getMaxDate: function() {
-                return $http.get('/api/tweetmaxdate/');
+            getMaxDate: function(projectId) {
+                return $http.get('/api/projects/'+projectId+'/tweetmaxdate/');
             },
-            getInGap: function(start,end) {
+            getInGap: function(projectId,start,end) {
                 var deferred = $q.defer();
-                $http({method:"GET", url:'/api/tweetsintimegap/' + start + '/' + end})
+                $http({method:"GET", url:'/api/projects/'+projectId+'/tweetsintimegap/' + start + '/' + end})
                 .success(function(result){
                     deferred.resolve(result);
                 });
                 return deferred.promise;
             },
-            getPerDay: function(start,end) {
-                return $http.get('/api/tweetsperday/' + start + '/' + end)
+            getPerDay: function(projectId,start,end) {
+                return $http.get('/api/projects/'+projectId+'/tweetsperday/' + start + '/' + end)
             },
-            tweetsByTerm: function(user,terms,mode) {
+            tweetsByTerm: function(projectId,user,terms,mode) {
                 if (! user)
                     user = false;
                 if (mode !== 'and')
                     mode = 'or';
                 var deferred = $q.defer();
-                $http({method:"GET", url:'/api/tweetsbyterm/' + user + '/' + terms + '/' + mode})
+                $http({method:"GET", url:'/api/projects/'+projectId+'/tweetsbyterm/' + user + '/' + terms + '/' + mode})
                 .success(function(result){
                       deferred.resolve(result);
                 });

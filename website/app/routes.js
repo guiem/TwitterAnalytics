@@ -6,6 +6,14 @@ var Project = require('./models/project');
 
 module.exports = function(app) {
 
+    /* EXECUTED IN ALL API REQUESTS */
+    app.all('/api/*', function(req, res, next){
+            console.log('awaiting for future auth implementation here.'); // TODO
+            next();
+        }
+    );
+    /* END EXECUTED IN ALL API REQUESTS */
+
     /* PROJECTS */
 
     // list all projects
@@ -22,6 +30,153 @@ module.exports = function(app) {
     });
 
     /* END PROJECTS */
+
+    /* TWEETS */
+    
+    // get number of tweets
+    app.get('/api/projects/:projectId/totaltweets', function(req, res) {
+        Tweet.find({'twitteranalytics_project_id':req.params.projectId}).count(function(err, count) {
+            if (err)
+                res.send(err)                    
+            res.json(count); 
+        });
+    });
+
+    // get number of rtweets
+    app.get('/api/projects/:projectId/totalrtweets', function(req, res) {
+        Tweet.find({'twitteranalytics_project_id':req.params.projectId,'retweeted': true}).count(function(err, count) {
+            if (err)
+                res.send(err)                     
+            res.json(count);
+        });
+    });
+
+    // get num tweets per user
+    app.get('/api/projects/:projectId/tweetsperuser', function(req, res) {
+        Tweet
+        .aggregate([
+            {$match : {'twitteranalytics_project_id':req.params.projectId}},
+            {$group:{_id:"$user.screen_name",count:{$sum:1}}},
+            {$sort:{count:-1}}], function(err,result) {
+            if (err)
+                res.send(err)                   
+            res.json(result);
+        });
+    });
+
+    // get num tweets geolocalized
+    app.get('/api/projects/:projectId/numgeo', function(req, res) {            
+        Tweet.find({'twitteranalytics_project_id':req.params.projectId,'coordinates':{$ne:null}}).count(function(err,count) {                            
+            if (err)
+                res.send(err)
+            res.json(count); 
+        });
+    });
+
+    // get tweets by screen_name
+    app.get('/api/projects/:projectId/usertweets/:screen_name', function(req, res) {
+        Tweet.find({'twitteranalytics_project_id':req.params.projectId,
+            "user.screen_name" : req.params.screen_name}, function(err, tweets) {
+            if (err)
+                res.send(err);
+            res.json(tweets);
+        });
+    });
+
+    // get date of first collected tweet
+    app.get('/api/projects/:projectId/tweetmindate', function(req, res) {
+        Tweet
+        .find({'twitteranalytics_project_id':req.params.projectId},{created_at:1,created_at_dt:1})
+        .limit(1)
+        .sort('created_at_dt')
+        .exec(function(err,date) {
+            if (err)
+                res.send(err)
+            res.json(date);
+        });
+    });
+    
+    // get date of last collected tweet
+    app.get('/api/projects/:projectId/tweetmaxdate', function(req, res) {
+        Tweet
+        .find({'twitteranalytics_project_id':req.params.projectId},{created_at:1,created_at_dt:1})
+        .limit(1)
+        .sort('-created_at_dt')
+        .exec(function(err,date) {
+            if (err)
+                res.send(err)
+            res.json(date);
+        });
+    });
+
+    // get tweets between dates
+    app.get('/api/projects/:projectId/tweetsintimegap/:start_date/:end_date', function(req, res) {
+        var dateStartAux = req.params.start_date.split("-");
+        var dateStart = new Date(dateStartAux[0],(parseInt(dateStartAux[1])-1).toString(),dateStartAux[2],'00','00','00');
+        var dateEndAux = req.params.end_date.split("-");
+        var dateEnd = new Date(dateEndAux[0],(parseInt(dateEndAux[1])-1).toString(),dateEndAux[2],'23','59','59');
+        Tweet.find({'twitteranalytics_project_id':req.params.projectId,
+            "created_at_dt" :{$gte : dateStart, $lte : dateEnd } })
+        .select('user.screen_name text created_at_dt')
+        .sort('-created_at_dt')
+        .exec(function(err, tweets) {
+            if (err)
+                res.send(err);
+            res.json(tweets);
+        });
+    });
+
+    // get num tweets per day between dates
+    app.get('/api/projects/:projectId/tweetsperday/:start_date/:end_date', function(req, res) {
+        var dateStartAux = req.params.start_date.split("-");
+        var dateStart = new Date(Date.UTC(dateStartAux[0],(parseInt(dateStartAux[1])-1).toString(),dateStartAux[2],'00','00','00'));
+        var dateEndAux = req.params.end_date.split("-");
+        var dateEnd = new Date(Date.UTC(dateEndAux[0],(parseInt(dateEndAux[1])-1).toString(),dateEndAux[2],'23','59','59'));
+        Tweet//.find({"created_at_dt" :{$gte : dateStart, $lte : dateEnd } })
+        .aggregate(
+            { $match : {'twitteranalytics_project_id':req.params.projectId,"created_at_dt" :{$gt : dateStart, $lte : dateEnd } } },
+            { $group : {
+                _id : { year: { $year : "$created_at_dt" }, month: { $month : "$created_at_dt" },day: { $dayOfMonth : "$created_at_dt" }},
+                count : { $sum : 1 }}
+            },function(err, tweets) {
+            if (err)
+                res.send(err);
+            res.json(tweets);
+        });
+    });
+
+    // get tweets that contain certain terms
+    app.get('/api/projects/:projectId/tweetsbyterm/:user/:terms/:mode', function(req, res) {
+        var i = 0;
+        var terms_aux = req.params.terms.split(',');
+        var terms = [];
+        var query = {};
+        while (i < terms_aux.length) {
+            if (req.params.mode !== 'and')
+                terms.push(eval('/'+terms_aux[i]+'/i'));
+            else
+                terms.push({text: { $in: [eval('/'+terms_aux[i]+'/i')]}});
+            i += 1;
+        }
+        if (req.params.mode !== 'and')
+            query = {text: { $in: terms}};
+        else {
+            query = {$and: terms}
+        }
+        if (req.params.user !== 'false')// TODO: make this prettier and use false value, not string
+            query['user.screen_name'] = req.params.user;
+        query['twitteranalytics_project_id'] = req.params.projectId;
+        Tweet.find(query)
+        .select('user.screen_name text created_at_dt')
+        .sort('-created_at_dt')
+        .exec(function(err,tweets){
+            if (err)
+                res.send(err);
+            res.json(tweets);
+        });
+    });
+
+    /* END TWEETS */
 	
 	// get all users
 	app.get('/api/users', function(req, res) {
@@ -67,84 +222,6 @@ module.exports = function(app) {
             });
         });
     
-    // get number of tweets
-	app.get('/api/totaltweets', function(req, res) {
-            
-        // db.tweets.find().count()
-        Tweet.find().count(function(err, count) {
-                                     
-            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-            if (err)
-                res.send(err)
-                                     
-            res.json(count); // return all todos in JSON format
-        });
-    });
-    
-    // get number of tweets
-	app.get('/api/totalrtweets', function(req, res) {
-        Tweet.find({"retweeted": true}).count(function(err, count) {
-            if (err)
-                res.send(err)
-                               
-            res.json(count);
-        });
-    });
-    
-    // get num tweets per user
-	app.get('/api/tweetsperuser', function(req, res) {
-            
-            // db.tweets.aggregate([{$group:{_id:"$user.screen_name",count:{$sum:1}}},{$sort:{count:-1}}])
-            Tweet.aggregate([{$group:{_id:"$user.screen_name",count:{$sum:1}}},{$sort:{count:-1}}], function(err,result) {
-                               
-                // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                if (err)
-                    res.send(err)
-                               
-                res.json(result); // return all todos in JSON format
-            });
-    });
-    
-    // get num tweets geolocalized
-	app.get('/api/numgeo', function(req, res) {
-            
-        // db.tweets.find({'coordinates':{$ne:null}}).count()
-        Tweet.find({'coordinates':{$ne:null}}).count(function(err,count) {
-                            
-            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-            if (err)
-                res.send(err)
-                            
-            res.json(count); // return all todos in JSON format
-        });
-    });
-    
-    // get date of first collected tweet
-	app.get('/api/tweetmindate', function(req, res) {
-        Tweet
-        .find({},{created_at:1,created_at_dt:1})
-        .limit(1)
-        .sort('created_at_dt')
-        .exec(function(err,date) {
-            if (err)
-                res.send(err)
-            res.json(date);
-        });
-    });
-    
-    // get date of last collected tweet
-	app.get('/api/tweetmaxdate', function(req, res) {
-    Tweet
-    .find({},{created_at:1,created_at_dt:1})
-    .limit(1)
-    .sort('-created_at_dt')
-    .exec(function(err,date) {
-        if (err)
-            res.send(err)
-        res.json(date);
-        });
-    });
-    
     // Basic characters filter based on this url: http://www.skorks.com/2010/05/what-every-developer-should-know-about-urls/
     var reservedCharacters = [";", "/", "?", ":", "@", "&", "=", "+", "$", ","];
     var unreservedCharacters = ["-", "_", ".", "!", "~", "*", "'", "(", ")"];
@@ -179,81 +256,6 @@ module.exports = function(app) {
             if (err)
                 res.send(err);
             res.json(hashtag);
-        });
-    });
-    
-    // get tweets by screen_name
-	app.get('/api/usertweets/:screen_name', function(req, res) {
-        Tweet.find({"user.screen_name" : req.params.screen_name}, function(err, tweets) {
-            if (err)
-                res.send(err);
-            res.json(tweets);
-        });
-    });
-    
-    // get tweets between dates
-	app.get('/api/tweetsintimegap/:start_date/:end_date', function(req, res) {
-        var dateStartAux = req.params.start_date.split("-");
-        var dateStart = new Date(dateStartAux[0],(parseInt(dateStartAux[1])-1).toString(),dateStartAux[2],'00','00','00');
-        var dateEndAux = req.params.end_date.split("-");
-        var dateEnd = new Date(dateEndAux[0],(parseInt(dateEndAux[1])-1).toString(),dateEndAux[2],'23','59','59');
-        Tweet.find({"created_at_dt" :{$gte : dateStart, $lte : dateEnd } })
-        .select('user.screen_name text created_at_dt')
-        .sort('-created_at_dt')
-        .exec(function(err, tweets) {
-            if (err)
-                res.send(err);
-            res.json(tweets);
-        });
-    });
-    
-    // get num tweets per day between dates
-	app.get('/api/tweetsperday/:start_date/:end_date', function(req, res) {
-        var dateStartAux = req.params.start_date.split("-");
-        var dateStart = new Date(Date.UTC(dateStartAux[0],(parseInt(dateStartAux[1])-1).toString(),dateStartAux[2],'00','00','00'));
-        var dateEndAux = req.params.end_date.split("-");
-        var dateEnd = new Date(Date.UTC(dateEndAux[0],(parseInt(dateEndAux[1])-1).toString(),dateEndAux[2],'23','59','59'));
-        Tweet//.find({"created_at_dt" :{$gte : dateStart, $lte : dateEnd } })
-        .aggregate(
-            { $match : {"created_at_dt" :{$gt : dateStart, $lte : dateEnd } } },
-            { $group : {
-                _id : { year: { $year : "$created_at_dt" }, month: { $month : "$created_at_dt" },day: { $dayOfMonth : "$created_at_dt" }},
-                count : { $sum : 1 }}
-            },function(err, tweets) {
-            if (err)
-                res.send(err);
-            res.json(tweets);
-        });
-    });
-    
-    // get tweets that contain certain terms
-	app.get('/api/tweetsbyterm/:user/:terms/:mode', function(req, res) {
-            console.log(req.params.terms);
-        var i = 0;
-        var terms_aux = req.params.terms.split(',');
-        var terms = [];
-        var query = {};
-        while (i < terms_aux.length) {
-            if (req.params.mode !== 'and')
-                terms.push(eval('/'+terms_aux[i]+'/i'));
-            else
-                terms.push({text: { $in: [eval('/'+terms_aux[i]+'/i')]}});
-            i += 1;
-        }
-        if (req.params.mode !== 'and')
-            query = {text: { $in: terms}};
-        else {
-            query = {$and: terms}
-        }
-        if (req.params.user !== 'false')// TODO: make this prettier and use false value, not string
-            query['user.screen_name'] = req.params.user;
-        Tweet.find(query)
-        .select('user.screen_name text created_at_dt')
-        .sort('-created_at_dt')
-        .exec(function(err,tweets){
-            if (err)
-                res.send(err);
-            res.json(tweets);
         });
     });
     

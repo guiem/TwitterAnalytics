@@ -18,6 +18,49 @@ angular.module('expdemController', ['ui.bootstrap'])
 
 	.controller('mainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects) {
               
+        $scope.formData = {}; // TODO: check if needed
+        $scope.loading = true;
+
+        function initData(){
+            /* TWEETS */
+            Tweets.getTotalTweets($scope.currentProject.name)
+            .success(function(data) {
+                $scope.totaltweets = data;
+                $scope.loading = false;
+            });
+
+
+            Tweets.getTotalRTweets($scope.currentProject.name)
+            .success(function(data) {
+                $scope.totalrtweets = data;
+                $scope.loading = false;
+            });
+
+            Tweets.getTweetsPerUser($scope.currentProject.name)
+            .success(function(data){
+                $scope.tweetsperuser = data;
+            });
+
+            // get num tweets geolocalized
+            Tweets.getNumGeo($scope.currentProject.name)
+            .success(function(data) {
+                $scope.numgeo = data;
+                $scope.loading = false;
+            });
+
+            Tweets.getMinDate($scope.currentProject.name)
+            .success(function(data) {
+                $scope.dtStart = new Date(data[0].created_at_dt);
+            });
+                
+            Tweets.getMaxDate($scope.currentProject.name)
+            .success(function(data) {
+                $scope.dtEnd = new Date(data[0].created_at_dt);
+            });
+            /* END TWEETS */
+
+        }
+              
         /* PROJECTS */
 
         // List of available projects
@@ -26,20 +69,76 @@ angular.module('expdemController', ['ui.bootstrap'])
             $scope.projects = data;
             if ($scope.projects.length > 0) {
                 $scope.currentProject = $scope.projects[0]; // initalizing current project in case no project is given
+                initData();
             }
-        });        
+        });  
+
+        // Watching the change of project
+        $scope.$watch('currentProject', function(newVal, oldVal) {
+            if ($scope.currentProject){
+                initData();
+            }
+        });      
 
         /* END PROJECTS */
 
-        Tweets.getMinDate()
-        .success(function(data) {
-            $scope.dtStart = new Date(data[0].created_at_dt);
-        });
-            
-        Tweets.getMaxDate()
-        .success(function(data) {
-            $scope.dtEnd = new Date(data[0].created_at_dt);
-        });
+        /* TWEETS */
+
+        // get tweets filtered by username
+        $scope.getTweetsByUser = function() {
+            Tweets.getByUser($scope.currentProject.name,$scope.currentuser)
+            .then(function(data) {
+                $scope.currenttweets = data;
+                $scope.ctTotalItems = $scope.currenttweets.length;
+                $scope.ctCurrentPage = 1;
+                $scope.ctItemsPerPage = 6;
+                $scope.ctMaxSize = 5;
+                updateCurrentTweetsPaging();
+            });
+        };
+
+        // get tweets in time gap
+        $scope.getTweetsInGap = function() {
+            if(!$scope.checkTweetsGap){
+                return;
+            }
+            Tweets.getInGap($scope.currentProject.name,$filter('date')($scope.dtStart,'yyyy-MM-dd'),$filter('date')($scope.dtEnd,'yyyy-MM-dd'))
+            .then(function(data) {
+                $scope.tweetsingap = data;
+                $scope.tfTotalItems = $scope.tweetsingap.length;
+                $scope.tfCurrentPage = 1;
+                $scope.tfItemsPerPage = 6;
+                $scope.tfMaxSize = 5;
+                updateTweetsInGapPaging();
+            });
+        };
+
+        // get num tweets per day
+        $scope.getTweetsPerDay = function() {
+            var ini = $filter('date')($scope.dtStart,'yyyy-MM-dd');
+            var end = $filter('date')($scope.dtEnd,'yyyy-MM-dd');
+            Tweets.getPerDay($scope.currentProject.name,ini,end)
+            .success(function(data) {
+                $scope.tweetsperday = data;
+                drawTweetsPerDay();
+            });
+        };
+
+        $scope.searchTerms = function(mode) {
+            $scope.loading = true;
+            Tweets.tweetsByTerm($scope.currentProject.name,$scope.userTerms,$scope.terms,mode)
+            .then(function(data) {
+                  $scope.tweetsterms = data;
+                  $scope.ttTotalItems = $scope.tweetsterms.length;
+                  $scope.ttCurrentPage = 1;
+                  $scope.ttItemsPerPage = 6;
+                  $scope.ttMaxSize = 5;
+                  updateTweetsTermsPaging();
+                  $scope.loading = false;
+            });
+        };
+
+        /* END TWEETS */
                 
         $scope.datepickers = {
             dtStart: $scope.dtStart,
@@ -76,11 +175,6 @@ angular.module('expdemController', ['ui.bootstrap'])
                 
         $scope.formats = ['dd/MM/yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         $scope.format = $scope.formats[0];
-                
-        Tweets.getTweetsPerUser()
-            .success(function(data){
-                $scope.tweetsperuser = data;
-            });
 
         // TODO: avoid duplicate code from routes.js
         // Basic characters filter based on this url: http://www.skorks.com/2010/05/what-every-developer-should-know-about-urls/
@@ -212,73 +306,10 @@ angular.module('expdemController', ['ui.bootstrap'])
             else
                 changeMaxTwittersChart($scope.maxTweeters);
         };
-                
-		$scope.formData = {};
-		$scope.loading = true;
-        
-
-        Tweets.getTotalTweets()
-        .success(function(data) {
-                 $scope.totaltweets = data;
-                 $scope.loading = false;
-                 });
-        
-        Tweets.getTotalRTweets()
-        .success(function(data) {
-            $scope.totalrtweets = data;
-            $scope.loading = false;
-        });
-        
-        Tweets.getNumGeo()
-        .success(function(data) {
-            $scope.numgeo = data;
-            $scope.loading = false;
-        });
-        
-        $scope.getTweetsByUser = function() {
-            Tweets.getByUser($scope.currentuser)
-            .then(function(data) {
-                $scope.currenttweets = data;
-                $scope.ctTotalItems = $scope.currenttweets.length;
-                $scope.ctCurrentPage = 1;
-                $scope.ctItemsPerPage = 6;
-                $scope.ctMaxSize = 5;
-                updateCurrentTweetsPaging();
-            });
-        };
-                
-        $scope.searchTerms = function(mode) {
-            $scope.loading = true;
-            Tweets.tweetsByTerm($scope.userTerms,$scope.terms,mode)
-            .then(function(data) {
-                  $scope.tweetsterms = data;
-                  $scope.ttTotalItems = $scope.tweetsterms.length;
-                  $scope.ttCurrentPage = 1;
-                  $scope.ttItemsPerPage = 6;
-                  $scope.ttMaxSize = 5;
-                  updateTweetsTermsPaging();
-                  $scope.loading = false;
-            });
-        };
         
         $scope.searchTermsAnd = function() {
             $scope.searchTerms('and');
         }
-                
-        $scope.getTweetsInGap = function() {
-            if(!$scope.checkTweetsGap){
-                return;
-            }
-            Tweets.getInGap($filter('date')($scope.dtStart,'yyyy-MM-dd'),$filter('date')($scope.dtEnd,'yyyy-MM-dd'))
-            .then(function(data) {
-                $scope.tweetsingap = data;
-                $scope.tfTotalItems = $scope.tweetsingap.length;
-                $scope.tfCurrentPage = 1;
-                $scope.tfItemsPerPage = 6;
-                $scope.tfMaxSize = 5;
-                updateTweetsInGapPaging();
-            });
-        };
         
         $scope.terms = [];
         
@@ -312,18 +343,6 @@ angular.module('expdemController', ['ui.bootstrap'])
             });
             drawTweetsPerDayChart(dayList);
         }
-                
-        $scope.getTweetsPerDay = function() {
-            var ini = $filter('date')($scope.dtStart,'yyyy-MM-dd');
-            var end = $filter('date')($scope.dtEnd,'yyyy-MM-dd');
-            console.log('ini '+ini);
-            console.log('end '+end);
-            Tweets.getPerDay(ini,end)
-            .success(function(data) {
-                $scope.tweetsperday = data;
-                drawTweetsPerDay();
-            });
-        };
         
         // tweets per user paging
         $scope.filteredTweetsPerUser = []
