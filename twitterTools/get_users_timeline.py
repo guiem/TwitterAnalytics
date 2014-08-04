@@ -43,7 +43,8 @@ def get_timeline(screen_name, since_id = False):
             for tweet in response:
                 tweet_id = tweet['id']
                 tweet['twitteranalytics_project_id'] = PROJECT_ID
-                if (not TIMELINE_KEYWORDS or contains_keywords(tweet['text'].encode('utf-8'))) and tweets.find({"id":tweet['id'] }).count() == 0:
+                if (not TIMELINE_KEYWORDS or contains_keywords(tweet['text'].encode('utf-8'))) and tweets.find({"id":tweet['id'],
+                "twitteranalytics_project_id":PROJECT_ID}).count() == 0:
                     dt = datetime.datetime.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y')
                     tweet['created_at_dt'] = dt
                     #import pdb
@@ -73,7 +74,7 @@ def get_timeline(screen_name, since_id = False):
 
 users_processed = 0
 users_updated = 0
-users_to_process = users.find()
+users_to_process = users.find({'twitteranalytics_project_id':PROJECT_ID})
 total_users = users_to_process.count()
 count = 0
 for user in users_to_process:
