@@ -52,7 +52,7 @@ angular.module('tweetService', [])
                       deferred.resolve(result);
                 });
                 return deferred.promise;
-             },
+            },
 		}
 	});
 

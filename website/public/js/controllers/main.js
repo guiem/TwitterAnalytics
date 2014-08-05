@@ -31,7 +31,6 @@ angular.module('expdemController', ['ui.bootstrap'])
                 $scope.loading = false;
             });
 
-
             Tweets.getTotalRTweets($scope.currentProject.name)
             .success(function(data) {
                 $scope.totalrtweets = data;

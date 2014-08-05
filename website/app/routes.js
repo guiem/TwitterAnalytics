@@ -20,7 +20,7 @@ module.exports = function(app) {
     app.get('/api/projects', function(req, res) {
         Project
         .find()
-        .select('title name')
+        .select('title name config')
         .exec(function(err, projects) {
             if (err) {
                 res.send(err);

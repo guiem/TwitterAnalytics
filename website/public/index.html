@@ -92,7 +92,8 @@
             </div>
             <div class="panel-body">
                 
-                <div class="row">
+                <!-- TWEETS TIME -->
+                <div ng-show="currentProject.config.tweets_time" class="row">
                     <div class="col-sm-12">
                         <div class="navbar-form navbar-left" role="search">
                             <div class="form-group">
@@ -163,9 +164,11 @@
                         </div>
                     </div>
                 </div>
-                <hr>
+                <!-- END TWEETS TIME -->
                 
-                <div class="row">
+                <!-- TWEETS BY CONTENT -->
+                <div ng-show="currentProject.config.tweets_by_content" class="row">
+                    <hr>
                     <div class="col-sm-12">
                         <div class="navbar-form navbar-left" role="search">
                             <div class="form-group">
@@ -225,9 +228,11 @@
                         </div>
                     </div>
                 </div>
+                <!-- END TWEETS BY CONTENT --> 
     
-                <hr>
-                <div class="row">
+                <!-- TOP TWEETERS -->
+                <div ng-show="currentProject.config.top_tweeters" class="row">
+                    <hr>
                     <div class="col-sm-2">
                         <div class="navbar-form navbar-left" role="search">
                             <div class="form-group">
@@ -240,8 +245,10 @@
                     <div class="col-sm-9" id="max-twitters-chart" width="800" height="400"></div>
                     {{changeMaxTwitters()}}
                 </div>
-                <hr>
+                <!-- END TOP TWEETERS -->
+
                 <div class="row">
+                    <hr>
                     <div class="col-sm-2">
                         <div class="navbar-form navbar-left" role="search">
                             <div class="form-group">
@@ -259,8 +266,8 @@
                     <canvas id="word-cloud-chart" width="900" height="400"></canvas>
                     
                 </div>
-                <hr>
                 <div class="row">
+                    <hr>
                     <div class="col-sm-2">
                         <div class="navbar-form navbar-left" role="search">
                             <div class="form-group">
@@ -271,8 +278,10 @@
                     </div>
                     <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
                 </div>
-                <hr>
-                <div class="row">
+                
+                <!-- COMMUNITY -->
+                <div ng-show="currentProject.config.community" class="row">
+                    <hr>
                     <div class="col-sm-6">
                         <div class="panel-heading">
                             <label>Análisis Comunidades</label>
@@ -288,10 +297,11 @@
                         <div class="col-sm-9" id="community2"></div>
                     </div>
                 </div>
-                <hr>
-                
-                <div class="row">
-            
+                <!-- END COMMUNITY -->
+
+                <!-- EXTRA -->
+                <div ng-show="currentProject.config.extra" class="row">
+                    <hr>
                     <div class="col-sm-5">
                         <div class="panel-heading">
                             <form class="navbar-form navbar-left" ng-submit="getTweetsByUser()">
@@ -338,6 +348,8 @@
                         </div>
                     </div>
                 </div>
+                <!-- END EXTRA -->
+
             </div>
 
 		<div class="text-center text-muted">
