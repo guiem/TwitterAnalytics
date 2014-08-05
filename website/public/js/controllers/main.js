@@ -16,7 +16,7 @@ angular.module('visualizationController', ['ui.bootstrap'])
         }
     })
 
-	.controller('mainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects) {
+	.controller('MainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects) {
               
         $scope.loading = true;
         $scope.formData = {}; // TODO: check if needed
