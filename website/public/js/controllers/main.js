@@ -1,4 +1,4 @@
-angular.module('expdemController', ['ui.bootstrap'])
+angular.module('visualizationController', ['ui.bootstrap'])
 
     .directive('loading', function () {
         return {

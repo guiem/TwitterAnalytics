@@ -1,5 +1,5 @@
-var app = angular.module('TwitterAnalytics', ['userService','tweetService','wordService',
-	'expdemController','hashtagService','projectsService','pascalprecht.translate'])
+var app = angular.module('TwitterAnalytics', ['visualizationController','userService','tweetService','wordService',
+	,'hashtagService','projectsService','pascalprecht.translate'])
 
 app.config(['$translateProvider', function($translateProvider) {
 	$translateProvider
