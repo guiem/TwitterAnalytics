@@ -13,6 +13,8 @@ Set of tools to retrieve & visualize tweets.
 
 ####B)Dependencies
 #####twitterTools:
+- tweepy: https://github.com/tweepy/tweepy (to get stream of tweets)
+
 #####website:
 - angular-translate: http://angular-translate.github.io/
 
