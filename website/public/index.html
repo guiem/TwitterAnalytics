@@ -270,11 +270,25 @@
                                         <label ng-show="showBlackList">Filtro modificable</label>
                                         <textarea ng-show="showBlackList" class="form-control" ng-model="$parent.blackList"> </textarea>
                                         <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></button>
-                                        <canvas id="word-cloud-chart" width="900" height="400"></canvas>
+                                        <div class="row">
+                                            <div class="col-sm-1"></div>
+                                            <div class="col-sm-6">
+                                                <canvas id="word-cloud-chart" width="900" height="400"></canvas>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div ng-show="tab.isSet(2)">
-                                        <input id="max-hashtags" type="text" class="form-control" ng-model="$parent.maxHashTags"  size="1" placeholder="50">
-                                        <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
+                                        <div class="row">
+                                            <div class="col-sm-2">
+                                                <input id="max-hashtags" type="text" class="form-control" ng-model="$parent.maxHashTags"  size="1" placeholder="50">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-1"></div>
+                                            <div class="col-sm-6">
+                                                <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
+                                            </div>
+                                        </div>
                                     </div>
                                 </section>
                             </div>
