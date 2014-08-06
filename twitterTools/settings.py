@@ -1,6 +1,6 @@
 import datetime
 
-PROJECT_ID = your project id here
+PROJECT_ID = 'your project id here'
 
 # TwitterSearch params
 CONSUMER_KEY = 'YOUR CONSUMER KEY'
@@ -21,6 +21,7 @@ END_DATE = False
 EXCLUDE_REPLIES = True
 
 USERS_FILE_PATH = 'None'
+DB_URL = 'localhost'
 
 try:
     from settings_local import *
