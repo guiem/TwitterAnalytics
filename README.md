@@ -20,3 +20,6 @@ Set of tools to retrieve & visualize tweets.
 
 #####utils:
 - fabric: http://www.fabfile.org/index.html
+
+#####desktop/retriever app:
+- Kivy: http://kivy.org
