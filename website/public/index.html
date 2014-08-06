@@ -263,17 +263,17 @@
                                             <a href ng-click="tab.setTab(2)">Hashtags</a></li>
                                     </ul>
                                     <div ng-show="tab.isSet(1)">
-                                        <input id="max-words" type="text" class="form-control" ng-model="maxWords" size="1" placeholder="50">
-                                        <input ng-model='showBlackList' type = 'checkbox'> Filtro</input>
-                                        <label ng-show="showBlackList">Filtro fijo no modificable</label>
-                                        <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="fixedBlackList"> </textarea>
+                                        <input id="max-words" type="text" class="form-control" ng-model="$parent.maxWords" size="1" placeholder="50">
+                                        <input ng-model='$parent.showBlackList' type = 'checkbox'> Filtro</input>
+                                        <label ng-show="$parent.showBlackList">Filtro fijo no modificable</label>
+                                        <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="$parent.fixedBlackList"> </textarea>
                                         <label ng-show="showBlackList">Filtro modificable</label>
-                                        <textarea ng-show="showBlackList" class="form-control" ng-model="blackList"> </textarea>
+                                        <textarea ng-show="showBlackList" class="form-control" ng-model="$parent.blackList"> </textarea>
                                         <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></button>
                                         <canvas id="word-cloud-chart" width="900" height="400"></canvas>
                                     </div>
                                     <div ng-show="tab.isSet(2)">
-                                        <input id="max-hashtags" type="text" class="form-control" ng-model="maxHashTags"  size="1" placeholder="50">
+                                        <input id="max-hashtags" type="text" class="form-control" ng-model="$parent.maxHashTags"  size="1" placeholder="50">
                                         <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
                                     </div>
                                 </section>
