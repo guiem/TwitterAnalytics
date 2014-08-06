@@ -26,6 +26,7 @@
     <script src="js/services/words.js"></script> <!-- load our words service -->
     <script src="js/services/hashtags.js"></script> <!-- load our hashtags service -->
     <script src="js/services/projects.js"></script> <!-- load our projects service -->
+    <script src="js/directives/directives.js"></script> <!-- load our projects service -->
     <script src="js/charts/tweetsperday.js"></script>
 	<script src="js/core.js"></script> <!-- load our main application -->
     <script src="js/ui-bootstrap-tpls-0.11.0.min.js"></script>
@@ -50,7 +51,7 @@
 
 </head>
 <!-- SET THE CONTROLLER -->
-<body ng-controller="MainController">
+<body ng-controller="MainController as main">
 	<div class="container">
         
         <div>
@@ -247,37 +248,40 @@
                 </div>
                 <!-- END TOP TWEETERS -->
 
+                <!-- WORD CLOUDS -->
                 <div class="row">
                     <hr>
                     <div class="col-sm-2">
                         <div class="navbar-form navbar-left" role="search">
                             <div class="form-group">
-                                <label>Nube de Palabras</label>
-                                <input id="max-words" type="text" class="form-control" ng-model="maxWords" size="1" placeholder="50">
-                            </div>
-                                    <input ng-model='showBlackList' type = 'checkbox'> Filtro</input>
-                                    <label ng-show="showBlackList">Filtro fijo no modificable</label>
-                                    <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="fixedBlackList"> </textarea>
-                                    <label ng-show="showBlackList">Filtro modificable</label>
-                                    <textarea ng-show="showBlackList" class="form-control" ng-model="blackList"> </textarea>
-                                    <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></button>
-                        </div>
-                    </div>
-                    <canvas id="word-cloud-chart" width="900" height="400"></canvas>
-                    
-                </div>
-                <div class="row">
-                    <hr>
-                    <div class="col-sm-2">
-                        <div class="navbar-form navbar-left" role="search">
-                            <div class="form-group">
-                                <label>Nube de Hashtags</label>
-                                <input id="max-hashtags" type="text" class="form-control" ng-model="maxHashTags"  size="1" placeholder="50">
+                                <label>Nubes</label>
+                                <section class="tab" ng-controller="TabController as tab">
+                                    <ul class="nav nav-pills">
+                                        <li ng-class="{ active: tab.isSet(1) }">
+                                            <a href ng-click="tab.setTab(1)">Palabras</a></li>
+                                        <li ng-class="{ active: tab.isSet(2) }">
+                                            <a href ng-click="tab.setTab(2)">Hashtags</a></li>
+                                    </ul>
+                                    <div ng-show="tab.isSet(1)">
+                                        <input id="max-words" type="text" class="form-control" ng-model="maxWords" size="1" placeholder="50">
+                                        <input ng-model='showBlackList' type = 'checkbox'> Filtro</input>
+                                        <label ng-show="showBlackList">Filtro fijo no modificable</label>
+                                        <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="fixedBlackList"> </textarea>
+                                        <label ng-show="showBlackList">Filtro modificable</label>
+                                        <textarea ng-show="showBlackList" class="form-control" ng-model="blackList"> </textarea>
+                                        <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></button>
+                                        <canvas id="word-cloud-chart" width="900" height="400"></canvas>
                                     </div>
+                                    <div ng-show="tab.isSet(2)">
+                                        <input id="max-hashtags" type="text" class="form-control" ng-model="maxHashTags"  size="1" placeholder="50">
+                                        <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
+                                    </div>
+                                </section>
+                            </div>
                         </div>
                     </div>
-                    <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
                 </div>
+                <!-- END WORD CLOUDS -->
                 
                 <!-- COMMUNITY -->
                 <div ng-show="currentProject.config.community" class="row">

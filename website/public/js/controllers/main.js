@@ -1,19 +1,15 @@
-angular.module('visualizationController', ['ui.bootstrap'])
+angular.module('visualizationController', ['ui.bootstrap','general-directives'])
 
-    .directive('loading', function () {
-        return {
-           restrict: 'E',
-           replace:true,
-           template: '<div style="float:left" class="col-md-offset-4 loading"><h2><img src="http://www.nasa.gov/multimedia/videogallery/ajax-loader.gif" width="20" height="20" /><text style="font-size:12px;"> loading...</text></h2></div>',
-           link: function (scope, element, attr) {
-               scope.$watch('loading', function (val) {
-                    if (val)
-                        $(element).show();
-                    else
-                        $(element).hide();
-                });
-           }
-        }
+    .controller('TabController', function(){
+        this.tab = 1;
+
+        this.setTab = function(newValue){
+          this.tab = newValue;
+        };
+
+        this.isSet = function(tabName){
+          return this.tab === tabName;
+        };
     })
 
 	.controller('MainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects) {
