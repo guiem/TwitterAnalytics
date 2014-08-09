@@ -27,4 +27,4 @@ try:
     from settings_local import *
 except:
     import traceback
-    print traceback.print_exc()
+    traceback.print_exc()

@@ -22,6 +22,7 @@ class CustomStreamListener(tweepy.StreamListener):
             jtweet['twitteranalytics_project_id'] = PROJECT_ID
             dt = datetime.datetime.strptime(jtweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y')
             jtweet['created_at_dt'] = dt
+            print jtweet['text']
             self.db.tweets.insert(jtweet)
         else:
             pass
@@ -35,9 +36,9 @@ class CustomStreamListener(tweepy.StreamListener):
 
 
 sapi = tweepy.streaming.Stream(auth, CustomStreamListener(api))
-#sapi.filter(track=['supercalifragilisticoespialidoso'])
+sapi.filter(track=['bonan','tago','gxis','ghix','saluton','esperanto','tamen','kvankam','bedaurinde','facte','nekredeble','dankon','Dankon'])
 #sapi.firehose()
 
 """Returns a small random sample of all public statuses. The Tweets returned by the default access level are the same, 
 so if two different clients connect to this endpoint, they will see the same Tweets."""
-sapi.sample() 
+#sapi.sample() 
