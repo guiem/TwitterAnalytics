@@ -1,7 +1,16 @@
 angular.module('visualizationController', ['ui.bootstrap','general-directives'])
 
-    .factory('myCache', function($cacheFactory) {
-        return $cacheFactory('projectName');
+    .service('sharedProperties', function () {
+        this.projectName = null;
+
+        return {
+            getProjectName: function () {
+                return this.projectName;
+            },
+            setProjectName: function(value) {
+                this.projectName = value;
+            }
+        };
     })
 
     .controller('TabController', function(){
@@ -16,15 +25,14 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
         };
     })
 
-    .controller('HomeController',function(myCache){
+    .controller('HomeController',function(sharedProperties){
 
         this.setProjectName = function(projectName){
-            myCache.put('projectName', projectName);
-            console.log('cache test ',myCache.get('projectName'));
+            sharedProperties.setProjectName(projectName);
         };
     })
 
-	.controller('MainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects, myCache) {
+	.controller('MainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects, sharedProperties) {
               
         $scope.loading = true;
         $scope.formData = {}; // TODO: check if needed
@@ -93,17 +101,19 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
         /* PROJECTS */
 
         function initProject(){
-            var cacheName = myCache.get('projectName');
-            console.log(cacheName);
-            if (cacheName){
-                myCache.remove('projectName'); // we clean projectName from cache to avoid conflicts
+            var projectName = sharedProperties.getProjectName();
+            console.log(projectName);
+            if (projectName){
                 var currProject = false;
                 angular.forEach($scope.projects, function(value,index){
-                    if (value.name === cacheName){
+                    if (value.name === projectName){
+                        console.log('valor igual');
                         currProject = value;
-                        return;
+                        return currProject;
                     }
                 })
+                if (currProject)
+                    return currProject;
             }
             return $scope.projects[0];
         }

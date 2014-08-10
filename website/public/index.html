@@ -3,6 +3,18 @@
 <!-- ASSIGN OUR ANGULAR MODULE -->
 <html ng-app="TwitterAnalytics">
     <head>
+        <!-- META -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
+
+        <title>Twitter Analytics</title>
+
+        <!-- SCROLLS -->
+        <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">--><!-- load bootstrap -->
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/style.css">
+    
         <!-- SPELLS -->
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script><!-- load angular -->
         <script src="http://code.angularjs.org/1.2.16/i18n/angular-locale_es-es.js"></script>
@@ -15,6 +27,7 @@
         <script src="js/services/projects.js"></script> <!-- load our projects service -->
         <script src="js/directives/directives.js"></script> <!-- load our projects service -->
         <script src="js/charts/tweetsperday.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
         <script src="js/core.js"></script> <!-- load our main application -->
         <script src="js/ui-bootstrap-tpls-0.11.0.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -33,12 +46,7 @@
             ga('send', 'pageview');
         </script>
     <body>
-        <div ng-controller="HomeController as home">
-            HERE GOES ALL PRETTY WEB PAGE EXPLANATION CONTENT (yes, it's a TODO)<br/>
-            <a href='/projects' ng-click="home.setProjectName('guiem_df')">Diversidad Funcional</a><br/>
-            <a href='#' ng-click="home.setProjectName('rocio_euPre')">Europeas PRE</a><br/>
-            <a href='/projects' ng-click="home.setProjectName('rocio_euPost')">Europeas POST</a><br/>
-        </div>        
+        <div ng-view></div>     
     </body>
 </html>
 <script src="js/charts/graph.js"></script>
