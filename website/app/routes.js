@@ -260,7 +260,13 @@ module.exports = function(app) {
     /* END USERS */
     
 	// application -------------------------------------------------------------
-	app.get('*', function(req, res) {
-		res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
-	});
+
+    // projects page route (http://localhost:8080/projects)
+    app.get('/projects', function(req, res) {
+        res.sendfile('./public/projects.html'); 
+    });
+
+    app.get('/', function(req, res) {
+        res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+    });
 };

@@ -1,5 +1,9 @@
 angular.module('visualizationController', ['ui.bootstrap','general-directives'])
 
+    .factory('myCache', function($cacheFactory) {
+        return $cacheFactory('projectName');
+    })
+
     .controller('TabController', function(){
         this.tab = 1;
 
@@ -12,7 +16,15 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
         };
     })
 
-	.controller('MainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects) {
+    .controller('HomeController',function(myCache){
+
+        this.setProjectName = function(projectName){
+            myCache.put('projectName', projectName);
+            console.log('cache test ',myCache.get('projectName'));
+        };
+    })
+
+	.controller('MainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects, myCache) {
               
         $scope.loading = true;
         $scope.formData = {}; // TODO: check if needed
@@ -80,12 +92,28 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
               
         /* PROJECTS */
 
+        function initProject(){
+            var cacheName = myCache.get('projectName');
+            console.log(cacheName);
+            if (cacheName){
+                myCache.remove('projectName'); // we clean projectName from cache to avoid conflicts
+                var currProject = false;
+                angular.forEach($scope.projects, function(value,index){
+                    if (value.name === cacheName){
+                        currProject = value;
+                        return;
+                    }
+                })
+            }
+            return $scope.projects[0];
+        }
+
         // List of available projects
         Projects.getProjects()
         .then(function(data) {
             $scope.projects = data;
             if ($scope.projects.length > 0) {
-                $scope.currentProject = $scope.projects[0]; // initalizing current project in case no project is given
+                $scope.currentProject = initProject();
                 initData();
             }
         });  

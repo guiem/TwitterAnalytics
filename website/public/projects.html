@@ -1,0 +1,384 @@
+<!doctype html>
+
+<!-- ASSIGN OUR ANGULAR MODULE -->
+<html ng-app="TwitterAnalytics">
+<head>
+	<!-- META -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
+
+	<title>Twitter Analytics</title>
+
+	<!-- SCROLLS -->
+	<!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">--><!-- load bootstrap -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+	<!-- SPELLS -->
+    
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script><!-- load angular -->
+    <script src="http://code.angularjs.org/1.2.16/i18n/angular-locale_es-es.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="js/controllers/main.js"></script> <!-- load up our controller -->
+    <script src="js/services/users.js"></script> <!-- load our users service -->
+    <script src="js/services/tweets.js"></script> <!-- load our tweets service -->
+    <script src="js/services/words.js"></script> <!-- load our words service -->
+    <script src="js/services/hashtags.js"></script> <!-- load our hashtags service -->
+    <script src="js/services/projects.js"></script> <!-- load our projects service -->
+    <script src="js/directives/directives.js"></script> <!-- load our projects service -->
+    <script src="js/charts/tweetsperday.js"></script>
+	<script src="js/core.js"></script> <!-- load our main application -->
+    <script src="js/ui-bootstrap-tpls-0.11.0.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="js/charts/wordcloud2.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="bower_components/angular-translate/angular-translate.js"></script>
+
+    <script src="js/client_config.js"></script>
+    <script src="js/client_config_local.js"></script> <!-- Create this file and override client_config.js variables. TODO: look for a more neat strategy to do this -->
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', ga_tracking_code , 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    <!--<script data-require="angular-ui-bootstrap@0.3.0" data-semver="0.3.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.3.0.min.js"></script>-->
+
+
+</head>
+<!-- SET THE CONTROLLER -->
+<body ng-controller="MainController as main">
+	<div class="container">
+        
+        <div>
+            <span translate="DROPDOWN_PROYECTOS"></span>
+            <select class="btn btn-default dropdown-toggle" ng-model="currentProject" ng-options="project.title for project in projects">
+            </select>
+        </div>
+        
+		<!-- HEADER AND CURRENT TWITTERS COUNT -->
+		<div class="jumbotron text-center">
+			<h2>Tweets : {{currentProject.title}}</h2>
+		</div>
+        <!-- General DATA -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Información General</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-sm-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td style="vertical-align:middle;">Total Usuarios <span class="badge alert-info">{{totalusers}}</span></td>
+                            
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:middle;">Total Tweets <span class="badge alert-info">{{totaltweets}}</span></td>
+                            <td style="vertical-align:middle;">Total RT <span class="badge alert-info">{{totalrtweets}}</span></td>
+                            <td style="vertical-align:middle;">Geolocalizados <span class="badge alert-info">{{ numgeo / totaltweets * 100 | number:2}}%</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+       
+        <!-- CHART DATA -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Actividad Usuarios</h3>
+            </div>
+            <div class="panel-body">
+                
+                <!-- TWEETS TIME -->
+                <div ng-show="currentProject.config.tweets_time" class="row">
+                    <div class="col-sm-12">
+                        <div class="navbar-form navbar-left" role="search">
+                            <div class="form-group">
+                                <label>Tweets en el tiempo</label>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        Desde
+                                    </div>
+                                    <div class="col-md-2">
+                                        Hasta
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <p class="input-group">
+                                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dtStart" is-open="datepickers.dt_start" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Cerrar"/>
+                                        <span class="input-group-btn">
+                                            <button id='start-date-btn' type="button" class="btn btn-default" ng-click="open($event,'dt_start')"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <p class="input-group">
+                                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dtEnd" is-open="datepickers.dt_end" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Cerrar"/>
+                                        <span class="input-group-btn">
+                                            <button id='end-date-btn' type="button" class="btn btn-default" ng-click="open($event,'dt_end')"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-default" ng-click="getTweetsPerDay()">Generar gráfico</button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        Mostrar Tweets en rango
+                                        <input id='box' ng-model='checkTweetsGap'  ng-change='getTweetsInGap()' type = 'checkbox' />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-10" ng-if="checkTweetsGap">
+                                        <div class="panel-heading"><label>Tweets en Rango Fechas : {{tfTotalItems}}</label>
+                                        </div>
+                                        
+                                        <!-- Table -->
+                                        <table class="table">
+                                            <th>Usuario</th>
+                                            <th>Tweet</th>
+                                            <th>Fecha</th>
+                                            <tr ng-repeat="t in filteredTweetsInGap">
+                                                <td>{{t.user.screen_name}}</td>
+                                                <td>{{t.text}}</td>
+                                                <td>{{t.created_at_dt | date:'dd/MM/yy HH:mm:ss'}}</td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <div class="row">
+                                            <pagination total-items="tfTotalItems" ng-model="tfCurrentPage" max-size="tfMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="tfNumPages" ng-change="tfPageChanged(tfCurrentPage)" items-per-page="tfItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
+                                            <pre>Página: {{tfCurrentPage}} / {{tfNumPages}}</pre>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div id="tweets-per-day-chart"></div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END TWEETS TIME -->
+                
+                <!-- TWEETS BY CONTENT -->
+                <div ng-show="currentProject.config.tweets_by_content" class="row">
+                    <hr>
+                    <div class="col-sm-12">
+                        <div class="navbar-form navbar-left" role="search">
+                            <div class="form-group">
+                                <label>Tweets por Contenido</label>
+                            
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form class="navbar-form navbar-left" ng-submit="addTerm()">
+                                        <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <input type="text" ng-model="termText" placeholder="añade núevo concepto" class="form-control">
+                                                    <input type="text" ng-model="userTerms" placeholder="usuario (opcional)" class="form-control">
+                                                    <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-plus"></span></button>
+                                                    <button type="button" class="btn btn-default" ng-click="clearTerms()"><i class="glyphicon glyphicon-remove"></i></button>
+                                                    <button type="button" class="btn btn-default" ng-click="searchTerms()">OR <i class="glyphicon glyphicon-search"></i></button>
+                                                    <button type="button" class="btn btn-default" ng-click="searchTermsAnd()">AND <i class="glyphicon glyphicon-search"></i></button>
+                                                </span>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                            </div>
+                            
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="unstyled">
+                                        <li ng-repeat="term in terms">
+                                            <span>{{term}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <loading></loading>
+                                    <table ng-if="filteredTweetsTerms" class="table">
+                                        <th>Usuario</th>
+                                        <th>Tweet</th>
+                                        <th>Fecha</th>
+                                        <tr ng-repeat="t in filteredTweetsTerms">
+                                            <td>{{t.user.screen_name}}</td>
+                                            <td><div ng-bind-html="formatText(t.text)"></td>
+                                            <td>{{t.created_at_dt | date:'dd/MM/yy HH:mm:ss'}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="row" ng-if="filteredTweetsTerms">
+                                <pagination total-items="ttTotalItems" ng-model="ttCurrentPage" max-size="ttMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="ttNumPages" ng-change="ttPageChanged(ttCurrentPage)" items-per-page="ttItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
+                                <pre>Página: {{ttCurrentPage}} / {{ttNumPages}}. Total recuperados: {{tweetsterms.length}}</pre>
+                            </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END TWEETS BY CONTENT --> 
+    
+                <!-- TOP TWEETERS -->
+                <div ng-show="currentProject.config.top_tweeters" class="row">
+                    <hr>
+                    <div class="col-sm-2">
+                        <div class="navbar-form navbar-left" role="search">
+                            <div class="form-group">
+                                <label>Top Tweeteros</label>
+                                <input id="max-tweeters" type="text" class="form-control" ng-model="maxTweeters"  size="1" placeholder="10">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-9" id="max-twitters-chart" width="800" height="400"></div>
+                    {{changeMaxTwitters()}}
+                </div>
+                <!-- END TOP TWEETERS -->
+
+                <!-- WORD CLOUDS -->
+                <div class="row">
+                    <hr>
+                    <div class="col-sm-2">
+                        <div class="navbar-form navbar-left" role="search">
+                            <div class="form-group">
+                                <label>Nubes</label>
+                                <section class="tab" ng-controller="TabController as tab">
+                                    <ul class="nav nav-pills">
+                                        <li ng-class="{ active: tab.isSet(1) }">
+                                            <a href ng-click="tab.setTab(1)">Palabras</a></li>
+                                        <li ng-class="{ active: tab.isSet(2) }">
+                                            <a href ng-click="tab.setTab(2)">Hashtags</a></li>
+                                    </ul>
+                                    <div ng-show="tab.isSet(1)">
+                                        <input id="max-words" type="text" class="form-control" ng-model="$parent.maxWords" size="1" placeholder="50">
+                                        <input ng-model='$parent.showBlackList' type = 'checkbox'> Filtro</input>
+                                        <label ng-show="$parent.showBlackList">Filtro fijo no modificable</label>
+                                        <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="$parent.fixedBlackList"> </textarea>
+                                        <label ng-show="showBlackList">Filtro modificable</label>
+                                        <textarea ng-show="showBlackList" class="form-control" ng-model="$parent.blackList"> </textarea>
+                                        <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></button>
+                                        <div class="row">
+                                            <div class="col-sm-1"></div>
+                                            <div class="col-sm-6">
+                                                <canvas id="word-cloud-chart" width="900" height="400"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div ng-show="tab.isSet(2)">
+                                        <div class="row">
+                                            <div class="col-sm-2">
+                                                <input id="max-hashtags" type="text" class="form-control" ng-model="$parent.maxHashTags"  size="1" placeholder="50">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-1"></div>
+                                            <div class="col-sm-6">
+                                                <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END WORD CLOUDS -->
+                
+                <!-- COMMUNITY -->
+                <div ng-show="currentProject.config.community" class="row">
+                    <hr>
+                    <div class="col-sm-6">
+                        <div class="panel-heading">
+                            <label>Análisis Comunidades</label>
+                        </div>
+                        <img style="width:500px" src="../communities.png"/>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="panel-heading"><label>Sub-red 04/05/2014 {expdem}</label>
+                        </div>
+                        <div class="col-sm-9" id="community"></div>
+                        <div class="panel-heading"><label>Sub-red 15/06/2014 {expdem}</label>
+                        </div>
+                        <div class="col-sm-9" id="community2"></div>
+                    </div>
+                </div>
+                <!-- END COMMUNITY -->
+
+                <!-- EXTRA -->
+                <div ng-show="currentProject.config.extra" class="row">
+                    <hr>
+                    <div class="col-sm-5">
+                        <div class="panel-heading">
+                            <form class="navbar-form navbar-left" ng-submit="getTweetsByUser()">
+                                <div class="input-group" style="margin-top:-20px">
+                                    <input type="text" ng-model="currentuser" placeholder="nombre de usuario" class="form-control">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="submit">Buscar Tweets</button>
+                                        </span>
+                                </div>
+                            </form>
+                            <table ng-if="filteredCurrentTweets" class="table">
+                                <tr ng-repeat="t in filteredCurrentTweets">
+                                    <td>{{t.text}}</td>
+                                </tr>
+                            </table>
+                            <div class="row" ng-if="filteredCurrentTweets">
+                                <pagination total-items="ctTotalItems" ng-model="ctCurrentPage" max-size="ctMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="ctNumPages" ng-change="ctPageChanged(ctCurrentPage)" items-per-page="ctItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
+                                <pre>Página: {{ctCurrentPage}} / {{ctNumPages}}</pre>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="panel-heading">
+                            Mostrar Ranking Tweeteros
+                            <input id='rank' ng-model='checkRankingTweeteros'  ng-change='getRankingTweeteros()' type = 'checkbox' />
+                            </div>
+                        </div>
+
+                        <div class="row" ng-if="checkRankingTweeteros">
+                            <table class="table">
+                                <th>Usuario</th>
+                                <th>Núm.Tweets</th>
+                                <tr ng-repeat="t in filteredTweetsPerUser">
+                                    <td>{{t._id}}</td>
+                                    <td>{{t.count}}</td>
+                                </tr>
+                            </table>
+                            <div class="row">
+                                <pagination total-items="tpuTotalItems" ng-model="tpuCurrentPage" max-size="tpuMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="tpuNumPages" ng-change="tpuPageChanged(tpuCurrentPage)" items-per-page="tpuItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
+                                <pre>Página: {{tpuCurrentPage}} / {{tpuNumPages}}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END EXTRA -->
+
+            </div>
+
+		<div class="text-center text-muted">
+			<p>A demo by <a href="http://guiem.info">guiem</a>.</p>
+		</div>
+
+	</div>
+
+</body>
+</html>
+<script src="js/charts/graph.js"></script>
+<script src="js/charts/graph2.js"></script>
+<script src="js/charts/chart.js"></script>
+
