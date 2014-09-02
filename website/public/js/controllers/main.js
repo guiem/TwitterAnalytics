@@ -1,6 +1,6 @@
 angular.module('visualizationController', ['ui.bootstrap','general-directives'])
 
-    .service('sharedProperties', function () {
+    .service('sharedProperties', function ($translate) {
         this.projectName = null;
 
         return {
@@ -9,7 +9,10 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             },
             setProjectName: function(value) {
                 this.projectName = value;
-            }
+            },
+            changeLanguage: function (key) {
+                $translate.use(key);
+            },
         };
     })
 
@@ -26,10 +29,16 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
     })
 
     .controller('HomeController',function(sharedProperties){
+        this.language='es';
 
         this.setProjectName = function(projectName){
             sharedProperties.setProjectName(projectName);
         };
+
+        this.changeLanguage = function(key){
+            sharedProperties.changeLanguage(key);
+            this.language = key;
+        }
     })
 
 	.controller('MainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects, sharedProperties) {

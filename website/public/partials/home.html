@@ -1,6 +1,28 @@
 <div ng-controller="HomeController as home">
-    HERE GOES ALL PRETTY WEB PAGE EXPLANATION CONTENT (yes, it's a TODO)<br/>
-    <a href='/projects' ng-click="home.setProjectName('guiem_df')">Diversidad Funcional</a><br/>
-    <a href='/projects' ng-click="home.setProjectName('rocio_euPre')">Europeas PRE</a><br/>
-    <a href='/projects' ng-click="home.setProjectName('rocio_euPost')">Europeas POST</a><br/>
+	<nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <span class="navbar-brand" href="#page-top">Twitter Analytics</span>
+            </div>
+             <div class="nav navbar-nav navbar-right">
+             	<a ng-show="home.language!='es'" href="#" ng-click="home.changeLanguage('es')" >Spanish</a>
+                <a ng-show="home.language!='en'" href="#" ng-click="home.changeLanguage('en')" >English</a>
+            </div>
+        </div>
+           
+        <!-- /.navbar-collapse -->
+    </nav>
+	<div class="container">
+	   	<h2><span translate="PROYECTOS"></span></h2>
+	    <a href='/projects' ng-click="home.setProjectName('guiem_df')">Diversidad Funcional</a><br/>
+	    <a href='/projects' ng-click="home.setProjectName('rocio_euPre')">Europeas PRE</a><br/>
+	    <a href='/projects' ng-click="home.setProjectName('rocio_euPost')">Europeas POST</a><br/>
+	    <h2><span translate="DESCARGAS"></span></h2>
+		    <a href="#" class="btn btn-lg btn-outline">
+	        	<i class="fa fa-download"></i> <span translate="DESCARGA_APP"></span>
+	        </a>
+	    <h2><span translate="COLABORA"></span></h2>
+	    <h2><span translate="CONTACTO"></span></h2>
+	</div>
 </div>   

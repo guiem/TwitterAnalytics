@@ -33,3 +33,21 @@ body {
  	height: 200px !important;
     overflow: scroll;
 }
+
+.btn-outline {
+    margin-top: 15px;
+    border: solid 2px #428bca;
+    font-size: 20px;
+    color: #428bca;
+    background: 0 0;
+    transition: all .3s ease-in-out;
+}
+
+.btn-outline:hover,
+.btn-outline:focus,
+.btn-outline:active,
+.btn-outline.active {
+    border: solid 2px #000;
+    color: #fff;
+    background: #428bca;
+}

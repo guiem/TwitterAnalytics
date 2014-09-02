@@ -22,10 +22,20 @@ app.config(
 app.config(['$translateProvider', function($translateProvider) {
 	$translateProvider
     .translations('es', {
-      'DROPDOWN_PROYECTOS': 'Proyectos',
+      'PROYECTOS': 'Proyectos',
+      'INICIO_LINK': 'Inicio',
+      'DESCARGAS': 'Descargas',
+      'COLABORA': 'Colabora',
+      'CONTACTO': 'Contacto',
+      'DESCARGA_APP':'Descarga App',
     })
     .translations('en', {
-      'DROPDOWN_PROYECTOS': 'Projects',
+      'PROYECTOS': 'Projects',
+      'INICIO_LINK': 'Home',
+      'DESCARGAS': 'Downloads',
+      'COLABORA': 'Take Part',
+      'CONTACTO': 'Contact',
+      'DESCARGA_APP':'Download App',
     })
     .preferredLanguage('es');
 }])
