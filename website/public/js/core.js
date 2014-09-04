@@ -33,6 +33,14 @@ app.config(['$translateProvider', function($translateProvider) {
       'CODIGO':'Ver Código',
       'COLABORA_TEXTO':"¿Quieres participar? Se trata de un proyecto de <strong>código abierto</strong> y está esperando la llegada de <strong>nuevas ideas/colaboraciones</strong> ¡Cuantos más seamos, mejor! :)",
       'COLABORA_DESCARGA':"No necesariamente tienes que saber programar (puedes reportar gazapos, sugerir mejoras ...). Pero si te gusta ensuciarte las manos, ¡aquí tienes el código!",
+      'CONTACTO_URL':"Puedes comentarme cualquier cosa <a href='http://guiem.info/contact/'>aquí</a>.",
+      'VER_PROYECTO':"Ver Proyecto",
+      'EUROPEAS_PRE':"Análisis de la presencia del Movimiento de Vida Independiente en torno a las elecciones Europeas en Twitter.",
+      'EUROPEAS_POST':"El mismo análisis después de las elecciones.",
+      'ESPERANTO':"Uso del esperanto en el mundo siguiendo actividad en Twitter.",
+      'EN_CURSO':"<i style='color:#999'>(trabajo en curso)</i>",
+      'FUNC_PRINCIPAL':"Recupera - Filtra - Visualiza",
+      'FUNC':"<strong>Twitter Analytics</strong> es una herramienta que permite recuperar tweets y/o analizar el flujo de mensajes en tiempo real. ",
     })
     .translations('en', {
       'PROYECTOS': 'Projects',
@@ -46,6 +54,14 @@ app.config(['$translateProvider', function($translateProvider) {
       'CODIGO':'View Source',
       'COLABORA_TEXTO':"Want to help? This is an <strong>Open Source</strong> project and it's awaiting for <strong>new ideas/collaborations</strong>. The more, the merrier! :)",
       'COLABORA_DESCARGA':"No need to be a programmer (you can help by reporting errors, suggesting new functionalities, ...). But in case you want to get your hands dirty, here: the code!",
+      'CONTACTO_URL':"For any comments, you can reach me <a href='http://guiem.info/contact/'>here</a>.",
+      'VER_PROYECTO':"View Project",
+      'EUROPEAS_PRE':"Study on the Independent Living Movement in Twitter during European Election.",
+      'EUROPEAS_POST':"Same study after European Election.",
+      'ESPERANTO':"Presence of Esperanto in Twitter around the globe.",
+      'EN_CURSO':"<i style='color:#999'>(work in progress)</i>",
+      'FUNC_PRINCIPAL':"Retrieve - Filter - Visualize",
+      'FUNC':"<strong>Twitter Analytics</strong> is a tool to analyze tweets by retrieving them from the past or directly listening to the Twitter Stream. ",
     })
     .preferredLanguage('es');
 }])

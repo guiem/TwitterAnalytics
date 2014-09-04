@@ -14,27 +14,43 @@
         <!-- /.navbar-collapse -->
     </nav>
 	<div class="container">
-		<div class="row">
-	    	<div class="col-lg-12 text-center">
-                <h1>Twitter Analytics</h1>
-            </div>
-        </div>
+		
         <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="intro-text">
+                    <h1><span class="name">Twitter Analytics</span></h1>
+                    <span class="skills"><span translate="FUNC_PRINCIPAL"></span></span>
+                    <br/>
+                    <div class="col-lg-6 text-center col-lg-offset-3">
+                    	<span class="skills-small"><span translate="FUNC"></span></span>
+                    </div>
+                </div>
+            </div>
         </div>
         <hr>
 
 		<div class="row">
 	    	<div class="col-lg-12 text-center">
                 <h2><span translate="PROYECTOS"></span></h2>
-                <hr class="star-primary">
             </div>
         </div>
 	   	<div class="row">
-		    <div class="col-lg-4 col-lg-offset-2">
-			    <a href='/projects' ng-click="home.setProjectName('guiem_df')">Diversidad Funcional</a><br/>
-			    <a href='/projects' ng-click="home.setProjectName('rocio_euPre')">Europeas PRE</a><br/>
-			    <a href='/projects' ng-click="home.setProjectName('rocio_euPost')">Europeas POST</a><br/>
+		    <div class="col-lg-6 col-lg-offset-1">
+		    	<h4>Diversidad Funcional</h4>
+		    	<iframe style="border:1px solid #999" src="//player.vimeo.com/video/99681649" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+			    <a href='/projects' class="btn btn-default" ng-click="home.setProjectName('guiem_df')"><span translate="VER_PROYECTO"></span></a><br/>
 			</div>
+			<div class="col-lg-4">
+	        	<h4>Europeas 2014 PRE</h4>
+	        	<p><span translate="EUROPEAS_PRE"</span></p>
+	        	<a href='/projects' class="btn btn-default" ng-click="home.setProjectName('rocio_euPre')"><span translate="VER_PROYECTO"></span></a><br/>
+	        	<h4>Europeas 2014 POST</h4>
+	        	<p><span translate="EUROPEAS_POST"</span></p>
+			    <a href='/projects' class="btn btn-default" ng-click="home.setProjectName('rocio_euPost')"><span translate="VER_PROYECTO"></span></a><br/>
+			    <h4>Esperanto en Twitter</h4>
+	        	<p><span translate="ESPERANTO"</span></p>
+			    <a href='#' disabled class="btn btn-default"><span translate="VER_PROYECTO"></span></a> <span translate="EN_CURSO"></span><br/>
+	        </div>
 		</div>
 	    <hr>
 
@@ -79,7 +95,8 @@
                 <h2><span translate="CONTACTO"></span></h2>
             </div>
         </div>        
-	    <div class="row">
+	    <div class="row text-center">
+	    	<p><span translate="CONTACTO_URL"></span></p>
 	    </div>
 	    <hr>
 	</div>
