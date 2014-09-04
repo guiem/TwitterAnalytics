@@ -10,7 +10,7 @@ import nltk
 connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
 db=connection.twitter
 tweets = db.tweets
-db.drop_collection(words)
+db.drop_collection(db.words)
 words = db.words
 
 """tweets_processed = 0

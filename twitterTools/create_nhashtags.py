@@ -9,7 +9,7 @@ import time
 connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
 db=connection.twitter
 tweets = db.tweets
-db.drop_collection(hashtags)
+db.drop_collection(db.hashtags)
 hashtags = db.hashtags
 
 tweets_processed = 0
