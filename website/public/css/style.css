@@ -34,7 +34,8 @@ body {
     overflow: scroll;
 }
 
-.btn-outline {
+.btn-outline,
+.btn-outline-na {
     margin-top: 15px;
     border: solid 2px #428bca;
     font-size: 20px;
@@ -50,6 +51,17 @@ body {
     border: solid 2px #000;
     color: #fff;
     background: #428bca;
+    opacity: .9;
+}
+
+.btn-outline-na:hover, 
+.btn-outline-na:focus,
+.btn-outline-na:active,
+.btn-outline-na.active{
+	border: solid 2px #000;
+    color: #fff;
+    background: #428bca;
+    opacity: .3;
 }
 
 h1,
