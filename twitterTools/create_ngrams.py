@@ -27,7 +27,7 @@ for tweet in tweets.find({ngrammed:None}):
 
 tweets_processed = 0
 res = {}
-for tweet in tweets.find():
+for tweet in tweets.find({"twitteranalytics_project_id":PROJECT_ID}):
     w_list = nltk.word_tokenize(tweet['text'])
     for w in w_list:
         if w.lower() not in res.keys():

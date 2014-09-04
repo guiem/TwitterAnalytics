@@ -14,7 +14,7 @@ hashtags = db.hashtags
 
 tweets_processed = 0
 res = {}
-for tweet in tweets.find():
+for tweet in tweets.find({"twitteranalytics_project_id":PROJECT_ID}):
     if 'entities' in tweet.keys() and tweet['entities']:
         for entity in tweet['entities']['hashtags']:
             entity = entity['text'].encode('utf-8')
