@@ -63,8 +63,9 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             });
 
             Tweets.getTweetsPerUser($scope.currentProject.name)
-            .success(function(data){
+            .then(function(data){
                 $scope.tweetsperuser = data;
+                changeMaxTwittersChart(10);
             });
 
             // get num tweets geolocalized
@@ -111,7 +112,6 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
 
         function initProject(){
             var projectName = sharedProperties.getProjectName();
-            console.log(projectName);
             if (projectName){
                 var currProject = false;
                 angular.forEach($scope.projects, function(value,index){
@@ -360,14 +360,15 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
                 });
             change(tweetsPerUserData);
         }
-                
-        $scope.changeMaxTwitters = function() {
+
+        // Watching the change of Tweets field to update the cloud
+        $scope.$watch('maxTweeters', function(newVal, oldVal) {
             if (!$scope.maxTweeters)
                 changeMaxTwittersChart(10);
             else
                 changeMaxTwittersChart($scope.maxTweeters);
-        };
-        
+        });
+
         $scope.searchTermsAnd = function() {
             $scope.searchTerms('and');
         }

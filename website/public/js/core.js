@@ -40,7 +40,7 @@ app.config(['$translateProvider', function($translateProvider) {
       'ESPERANTO':"Uso del esperanto en el mundo siguiendo actividad en Twitter.",
       'EN_CURSO':"<i style='color:#999'>(trabajo en curso)</i>",
       'FUNC_PRINCIPAL':"Recupera - Filtra - Visualiza",
-      'FUNC':"<strong>Twitter Analytics</strong> es una herramienta que permite recuperar tweets y/o analizar el flujo de mensajes en tiempo real. ",
+      'FUNC':"<strong>Twitter Analytics</strong> es una herramienta que permite recuperar tweets del pasado y/o el flujo de mensajes en tiempo real. ",
     })
     .translations('en', {
       'PROYECTOS': 'Projects',

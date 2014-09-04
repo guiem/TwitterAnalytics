@@ -11,7 +11,12 @@ angular.module('tweetService', [])
                 return $http.get('/api/projects/'+projectId+'/totalrtweets');
             },
             getTweetsPerUser : function(projectId) {
-                return $http.get('/api/projects/'+projectId+'/tweetsperuser');
+                var deferred = $q.defer();
+                $http.get('/api/projects/'+projectId+'/tweetsperuser')
+                .success(function(result){
+                    deferred.resolve(result);
+                });
+                return deferred.promise;
             },
             getNumGeo: function(projectId) {
                 return $http.get('/api/projects/'+projectId+'/numgeo');
