@@ -41,12 +41,17 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
         }
     })
 
-	.controller('MainController', function($scope, $filter, $http, $sce, Users, Tweets, Words, HashTags, Projects, sharedProperties) {
-              
+	.controller('MainController', function($scope, $filter, $http, $sce, $routeParams,Users, Tweets, Words, HashTags, Projects, sharedProperties) {
+        
         $scope.loading = true;
         $scope.formData = {}; // TODO: check if needed
         $scope.formats = ['dd/MM/yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         $scope.format = $scope.formats[0];
+
+        // Initializing project by route if necessary
+        if ($routeParams.projectId) {
+            sharedProperties.setProjectName($routeParams.projectId);
+        }
 
         function initData(){
             /* TWEETS */

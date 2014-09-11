@@ -8,7 +8,7 @@ app.config(
         templateUrl: 'partials/home.html',
         controller: 'HomeController',
       }).
-      when('/projects', {
+      when('/projects/:projectId?', {
         templateUrl: 'partials/projects.html',
         controller: 'MainController'
       }).
