@@ -10,7 +10,8 @@ import nltk
 connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
 db=connection.twitter
 tweets = db.tweets
-db.drop_collection(db.words)
+#db.drop_collection(db.words)
+db.words.remove({'twitteranalytics_project_id':PROJECT_ID})
 words = db.words
 
 """tweets_processed = 0
