@@ -15,7 +15,7 @@ users = db.users
 users_processed = 0
 f = open('users_list.txt','w')
 users_list = []
-for user in users.find():
+for user in users.find({"twitteranalytics_project_id":PROJECT_ID}):
     users_list.append(user['screen_name'])
     users_processed += 1
     print 'Processed {0}, num_users {1}'.format(user['screen_name'], users_processed)

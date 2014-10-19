@@ -1,27 +1,36 @@
+
+"""Usage: users_community.py -f FILE
+
+Options:
+    -f sets file name
+"""
+
 import tweepy
 from settings import *
 from utils import *
 import pickle
 from os import path
+from docopt import docopt
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth)
 
-users_list = ['guiemb','rosanasj','expdem','birrabel']
-
 class Community():
     community = False
+    users_list = False
+    #users_list = ['guiemb','rosanasj','expdem','birrabel']
 
-    def __init__(self, api):
+    def __init__(self, api, users_list):
         self.api = api
+        self.users_list = users_list 
         self.community = self._load()
         if not self.community:
             self.community = self._get_ids_names()
 
     def _get_ids_names(self):
         res = {}
-        users = self.api.lookup_users(screen_names=users_list)
+        users = self.api.lookup_users(screen_names=self.users_list)
         for u in users:
             if u.id not in res.keys():
                 res[u.id] = {'screen_name':u.screen_name}
@@ -59,4 +68,11 @@ class Community():
         print self.community
 
 if __name__ == "__main__":
-    Community(api).build_community()
+    args = docopt(__doc__)
+    u = []
+    if args['-f']: 
+        with open(args['-f'], 'r') as f:
+            for user in f.readlines():
+                u.append(user.split('\n')[0])
+    c = Community(api,u)
+    c.build_community()
