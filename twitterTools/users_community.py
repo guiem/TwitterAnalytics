@@ -11,6 +11,7 @@ from utils import *
 import pickle
 from os import path
 from docopt import docopt
+import time
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
@@ -30,7 +31,16 @@ class Community():
 
     def _get_ids_names(self):
         res = {}
-        users = self.api.lookup_users(screen_names=self.users_list)
+        users_gap = 100 #up to 100 screen names
+        chunks = [self.users_list[x:x+users_gap] for x in xrange(0, len(self.users_list), 100)]
+        users = []
+        for chunk in chunks:
+            limit_status = self.api.rate_limit_status()['resources']['users']['/users/lookup']
+            sleep = needs_sleep(limit_status['remaining'],limit_status['reset'])
+            if sleep:
+                print 'Getting User ids. Sleeping {0} seconds to avoid reaching rate limit.'.format(sleep)
+                time.sleep(sleep)
+            users += self.api.lookup_users(screen_names=chunk)
         for u in users:
             if u.id not in res.keys():
                 res[u.id] = {'screen_name':u.screen_name}
