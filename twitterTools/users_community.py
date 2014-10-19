@@ -34,7 +34,11 @@ class Community():
         users_gap = 100 #up to 100 screen names
         chunks = [self.users_list[x:x+users_gap] for x in xrange(0, len(self.users_list), 100)]
         users = []
+        total_treated = 0
         for chunk in chunks:
+            total_treated += len(chunk)
+            print 'Getting User ids. Treating chunk of len {0}. Treated {1} over {2} --> {3}'.format(len(chunk),total_treated,
+                len(self.users_list),chunk)
             limit_status = self.api.rate_limit_status()['resources']['users']['/users/lookup']
             sleep = needs_sleep(limit_status['remaining'],limit_status['reset'])
             if sleep:
