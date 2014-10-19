@@ -73,9 +73,14 @@ class Community():
                 if sleep:
                     print 'Sleeping {0} seconds to avoid reaching rate limit.'.format(sleep)
                     time.sleep(sleep)
-                friends = self.api.friends_ids(value['screen_name'])
-                self.community[key]['friends'] = list(set(friends).intersection(set(self.community.keys())))
-                self._save()
+                try:
+                    friends = self.api.friends_ids(value['screen_name'])
+                    self.community[key]['friends'] = list(set(friends).intersection(set(self.community.keys())))
+                    self._save()
+                except TweepError as e:
+                    f = open('users_community.log','a')
+                    f.write(str(datetime.datetime.now()) + str(e))
+                    f.close()
             else:
                 print 'User already loaded from pickle.'
             count += 1
