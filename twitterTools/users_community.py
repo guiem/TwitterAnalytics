@@ -12,6 +12,7 @@ import pickle
 from os import path
 from docopt import docopt
 import time
+from tweepy.error import TweepError
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
@@ -79,7 +80,7 @@ class Community():
                     self._save()
                 except TweepError as e:
                     f = open('users_community.log','a')
-                    f.write(str(datetime.datetime.now()) + str(e))
+                    f.write(value['screen_name']+' ' + str(datetime.datetime.now()) + str(e)+'\n')
                     f.close()
             else:
                 print 'User already loaded from pickle.'
