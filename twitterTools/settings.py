@@ -20,6 +20,9 @@ START_DATE = False # careful because it takes UTC times
 END_DATE = False
 EXCLUDE_REPLIES = True
 
+# Communities analysis
+PICKLE_NAME = 'partial storage file name'
+
 USERS_FILE_PATH = 'None'
 DB_URL = 'localhost'
 
