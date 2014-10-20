@@ -79,6 +79,7 @@ class Community():
                     self.community[key]['friends'] = list(set(friends).intersection(set(self.community.keys())))
                     self._save()
                 except TweepError as e:
+                    self.community[key]['friends'] = False # to avoid trying to process it again
                     f = open('users_community.log','a')
                     f.write(value['screen_name']+' ' + str(datetime.datetime.now()) + str(e)+'\n')
                     f.close()
