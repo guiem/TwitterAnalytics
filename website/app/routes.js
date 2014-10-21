@@ -176,6 +176,16 @@ module.exports = function(app) {
         });
     });
 
+    // get num tweets with hashtag
+    app.get('/api/projects/:projectId/tweetswithhashtag', function(req, res) {
+        Tweet.find({'twitteranalytics_project_id':req.params.projectId, text:{$regex : ".*#.*"}})
+        .count(function(err, count) {
+            if (err)
+                res.send(err)                    
+            res.json(count); 
+        });
+    });
+
     /* END TWEETS */
 
     /* HASHTAGS */

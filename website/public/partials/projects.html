@@ -18,7 +18,7 @@
                 <h3 class="panel-title">Información General</h3>
             </div>
             <div class="panel-body">
-                <div class="col-sm-6">
+                <div class="col-sm-8">
                     <table class="table table-bordered">
                         <tr>
                             <td style="vertical-align:middle;">Total Usuarios <span class="badge alert-info">{{totalusers}}</span></td>
@@ -28,6 +28,7 @@
                             <td style="vertical-align:middle;">Total Tweets <span class="badge alert-info">{{totaltweets}}</span></td>
                             <td style="vertical-align:middle;">Total RT <span class="badge alert-info">{{totalrtweets}}</span></td>
                             <td style="vertical-align:middle;">Geolocalizados <span class="badge alert-info">{{ numgeo / totaltweets * 100 | number:2}}%</span></td>
+                            <td style="vertical-align:middle;">Contienen # <span class="badge alert-info">{{ numtweetswithhashtag / totaltweets * 100 | number:2}}%</span></td>
                         </tr>
                     </table>
                 </div>

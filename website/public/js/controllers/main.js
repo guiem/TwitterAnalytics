@@ -73,6 +73,11 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
                 changeMaxTwittersChart(10);
             });
 
+            Tweets.getTweetsWithHashtag($scope.currentProject.name)
+            .then(function(data){
+                $scope.numtweetswithhashtag = data;
+            });
+
             // get num tweets geolocalized
             Tweets.getNumGeo($scope.currentProject.name)
             .success(function(data) {

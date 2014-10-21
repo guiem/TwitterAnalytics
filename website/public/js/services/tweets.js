@@ -58,6 +58,14 @@ angular.module('tweetService', [])
                 });
                 return deferred.promise;
             },
+            getTweetsWithHashtag: function(projectId) {
+                var deferred = $q.defer();
+                $http({method:"GET", url:'/api/projects/'+projectId+'/tweetswithhashtag/'})
+                .success(function(result){
+                    deferred.resolve(result);
+                });
+                return deferred.promise;
+            },
 		}
 	});
 
