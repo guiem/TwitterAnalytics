@@ -307,8 +307,8 @@ if (!window.clearImmediate) {
       }
     }
 
-    /* Make sure gridSize is not smaller than 4px */
-    settings.gridSize = Math.max(settings.gridSize, 4);
+    /* Make sure gridSize is a whole number and is not smaller than 4px */
+    settings.gridSize = Math.max(Math.floor(settings.gridSize), 4);
 
     /* shorthand */
     var g = settings.gridSize;
@@ -361,13 +361,13 @@ if (!window.clearImmediate) {
     var hovered;
 
     var getInfoGridFromMouseEvent = function getInfoGridFromMouseEvent(evt) {
-      var canvas = evt.target;
+      var canvas = evt.currentTarget;
       var rect = canvas.getBoundingClientRect();
       var eventX = evt.clientX - rect.left;
       var eventY = evt.clientY - rect.top;
 
-      var x = Math.floor(eventX * (canvas.width / rect.width) / g);
-      var y = Math.floor(eventY * (canvas.height / rect.height) / g);
+      var x = Math.floor(eventX * ((canvas.width / rect.width) || 1) / g);
+      var y = Math.floor(eventY * ((canvas.height / rect.height) || 1) / g);
 
       return infoGrid[x][y];
     };
@@ -526,11 +526,13 @@ if (!window.clearImmediate) {
       fcanvas.setAttribute('height', height);
 
       if (debug) {
+        // Attach fcanvas to the DOM
         document.body.appendChild(fcanvas);
+        // Save it's state so that we could restore and draw the grid correctly.
+        fctx.save();
       }
 
       // Scale the canvas with |mu|.
-      fctx.save();
       fctx.scale(1 / mu, 1 / mu);
       fctx.translate(width * mu / 2, height * mu / 2);
       fctx.rotate(- rotateDeg);
@@ -551,14 +553,18 @@ if (!window.clearImmediate) {
       fctx.fillText(word, fillTextOffsetX * mu,
                     (fillTextOffsetY + fontSize * 0.5) * mu);
 
-      // Restore the transform.
-      fctx.restore();
-
       // Get the pixels of the text
       var imageData = fctx.getImageData(0, 0, width, height).data;
 
       if (exceedTime()) {
         return false;
+      }
+
+      if (debug) {
+        // Draw the box of the original estimation
+        fctx.strokeRect(fillTextOffsetX * mu,
+                        fillTextOffsetY, fw * mu, fh * mu);
+        fctx.restore();
       }
 
       // Read the pixels and save the information to the occupied array
@@ -647,7 +653,7 @@ if (!window.clearImmediate) {
 
     /* Actually draw the text on the grid */
     var drawText = function drawText(gx, gy, info, word, weight,
-                                     distance, theta, rotateDeg) {
+                                     distance, theta, rotateDeg, attributes) {
 
       var fontSize = info.fontSize;
       var color;
@@ -738,6 +744,11 @@ if (!window.clearImmediate) {
           for (var cssProp in styleRules) {
             span.style[cssProp] = styleRules[cssProp];
           }
+          if (attributes) {
+            for (var attribute in attributes) {
+              span.setAttribute(attribute, attributes[attribute]);
+            }
+          }
           el.appendChild(span);
         }
       });
@@ -799,8 +810,15 @@ if (!window.clearImmediate) {
        calculate it's size and determine it's position, and actually
        put it on the canvas. */
     var putWord = function putWord(item) {
-      var word = item[0];
-      var weight = item[1];
+      var word, weight, attributes;
+      if (Array.isArray(item)) {
+        word = item[0];
+        weight = item[1];
+      } else {
+        word = item.word;
+        weight = item.weight;
+        attributes = item.attributes;
+      }
       var rotateDeg = getRotateDeg();
 
       // get info needed to put the text onto the canvas
@@ -841,7 +859,7 @@ if (!window.clearImmediate) {
 
         // Actually put the text on the canvas
         drawText(gx, gy, info, word, weight,
-                 (maxRadius - r), gxy[2], rotateDeg);
+                 (maxRadius - r), gxy[2], rotateDeg, attributes);
 
         // Mark the spaces on the grid as filled
         updateGrid(gx, gy, gw, gh, info, item);

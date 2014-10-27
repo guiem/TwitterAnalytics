@@ -27,9 +27,15 @@ class Community():
         self.api = api
         self.users_list = users_list 
         self.community = self._load()
-        if not self.community:
-            self.community = self._get_ids_names()
-
+        if not self.community or len(self.community) != len(users_list):
+            aux_res = self._get_ids_names()
+            if len(self.community) != len(users_list):
+                for u_id in aux_res.keys():
+                    if u_id not in self.community.keys():
+                        self.community[u_id] = aux_res[u_id]
+            else:
+                self.community = aux_res
+  
     def _get_ids_names(self):
         res = {}
         users_gap = 100 #up to 100 screen names
@@ -45,7 +51,11 @@ class Community():
             if sleep:
                 print 'Getting User ids. Sleeping {0} seconds to avoid reaching rate limit.'.format(sleep)
                 time.sleep(sleep)
-            users += self.api.lookup_users(screen_names=chunk)
+            try:
+                users += self.api.lookup_users(screen_names=chunk) # TODO take a look and see how many users we really get...
+            except:
+                import traceback
+                traceback.print_exc()
         for u in users:
             if u.id not in res.keys():
                 res[u.id] = {'screen_name':u.screen_name}

@@ -212,6 +212,7 @@
                                     </ul>
                                     <div ng-show="tab.isSet(1)">
                                         <input id="max-words" type="text" class="form-control" ng-model="$parent.maxWords" size="1" placeholder="50">
+                                        <input ng-model='$parent.wordsReal' type = 'checkbox'>Proporción Real</input>
                                         <input ng-model='$parent.showBlackList' type = 'checkbox'> Filtro</input>
                                         <label ng-show="$parent.showBlackList">Filtro fijo no modificable</label>
                                         <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="$parent.fixedBlackList"> </textarea>
@@ -227,8 +228,9 @@
                                     </div>
                                     <div ng-show="tab.isSet(2)">
                                         <div class="row">
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-4">
                                                 <input id="max-hashtags" type="text" class="form-control" ng-model="$parent.maxHashTags"  size="1" placeholder="50">
+                                                <input ng-model='$parent.hashReal' type = 'checkbox'>Proporción Real</input>
                                             </div>
                                         </div>
                                         <div class="row">

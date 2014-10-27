@@ -231,6 +231,13 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             }
         });
 
+        // Watching the change of hashReal field to update the cloud
+        $scope.$watch('hashReal', function(newVal, oldVal) {
+            if ($scope.currentProject){
+                updateHashtags();   
+            }
+        });
+
         function changeMaxHashTagsChart(){
             var wordsData = [];
             var usersBlackList = [];
@@ -239,11 +246,16 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             });
             var maxCount = 0;
             angular.forEach($scope.nHashtags, function(res) {
-                maxCount = Math.max(maxCount,res.count);
+                maxCount = Math.max(maxCount,res.count); // we know, because it comes in desc order that we'll keep the first value
                 var isUser = usersBlackList.indexOf(res.word);
-                if(isUser == -1)
-                    wordsData.push([res.hashtag, res.count*100/maxCount]);
-                });
+                if(isUser == -1){
+                    if ($scope.hashReal)
+                        wordsData.push([res.hashtag, res.count*100/maxCount]);
+                    else
+                        wordsData.push([res.hashtag, Math.log(res.count*100/maxCount)*10]);
+                }
+            });
+            console.log(wordsData);
             WordCloud(document.getElementById('word-cloud-chart-hashtags'), { list: wordsData } );
         }
 
@@ -299,6 +311,13 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             }   
         });
 
+        // Watching the change of wordsReal field to update the cloud
+        $scope.$watch('wordsReal', function(newVal, oldVal) {
+            if ($scope.currentProject){
+                updateWords();   
+            }   
+        });
+
         // Function to update the number of words in the cloud we want to retrieve once filter file has changed
         $scope.getNGramsUpdate = function() {
             updateWords();
@@ -315,8 +334,12 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             angular.forEach($scope.nGrams, function(res) {
                 maxCount = Math.max(maxCount,res.count);
                 var isUser = usersBlackList.indexOf(res.word);
-                if(isUser == -1)
-                    wordsData.push([res.word, res.count*100/maxCount]);
+                if(isUser == -1){
+                    if ($scope.wordsReal)
+                        wordsData.push([res.word, res.count*100/maxCount]);
+                    else
+                        wordsData.push([res.word, Math.log(res.count*100/maxCount)*10]);
+                }
             });
             WordCloud(document.getElementById('word-cloud-chart'), { list: wordsData } );
         }
