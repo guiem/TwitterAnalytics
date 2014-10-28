@@ -162,7 +162,7 @@
                                         <th>Fecha</th>
                                         <tr ng-repeat="t in filteredTweetsTerms">
                                             <td>{{t.user.screen_name}}</td>
-                                            <td><div ng-bind-html="formatText(t.text)"></td>
+                                            <td><div ng-bind-html="formatText(t.text)"></div></td>
                                             <td>{{t.created_at_dt | date:'dd/MM/yy HH:mm:ss'}}</td>
                                         </tr>
                                     </table>
@@ -218,7 +218,7 @@
                                         <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="$parent.fixedBlackList"> </textarea>
                                         <label ng-show="showBlackList">Filtro modificable</label>
                                         <textarea ng-show="showBlackList" class="form-control" ng-model="$parent.blackList"> </textarea>
-                                        <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></button>
+                                        <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></span></button>
                                         <div class="row">
                                             <div class="col-sm-1"></div>
                                             <div class="col-sm-6">
