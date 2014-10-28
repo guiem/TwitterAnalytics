@@ -238,6 +238,18 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             }
         });
 
+        // This function is called when hovering over a word
+        function wordHover(item, dimension, event){
+            var res = '';
+            if (item != undefined){
+                if (item[2] > 1)
+                    res = "<strong>"+item[0]+"</strong>"+" aparece <strong>"+item[2]+"</strong> veces";
+                else
+                    res = "<strong>"+item[0]+"</strong>"+" aparece <strong>"+item[2]+"</strong> vez";
+            }
+            document.getElementById("word-info").innerHTML = res;
+        }
+
         function changeMaxHashTagsChart(){
             var wordsData = [];
             var usersBlackList = [];
@@ -250,13 +262,12 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
                 var isUser = usersBlackList.indexOf(res.word);
                 if(isUser == -1){
                     if ($scope.hashReal)
-                        wordsData.push([res.hashtag, res.count*100/maxCount]);
+                        wordsData.push([res.hashtag, res.count*100/maxCount,res.count]);
                     else
-                        wordsData.push([res.hashtag, Math.log(res.count*100/maxCount)*10]);
+                        wordsData.push([res.hashtag, Math.log(res.count*100/maxCount)*10,res.count]);
                 }
             });
-            console.log(wordsData);
-            WordCloud(document.getElementById('word-cloud-chart-hashtags'), { list: wordsData } );
+            WordCloud(document.getElementById('word-cloud-chart-hashtags'), { list: wordsData, hover:wordHover} );
         }
 
         /* END HASHTAGS */
@@ -336,12 +347,12 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
                 var isUser = usersBlackList.indexOf(res.word);
                 if(isUser == -1){
                     if ($scope.wordsReal)
-                        wordsData.push([res.word, res.count*100/maxCount]);
+                        wordsData.push([res.word, res.count*100/maxCount,res.count]);
                     else
-                        wordsData.push([res.word, Math.log(res.count*100/maxCount)*10]);
+                        wordsData.push([res.word, Math.log(res.count*100/maxCount)*10,res.count]);
                 }
             });
-            WordCloud(document.getElementById('word-cloud-chart'), { list: wordsData } );
+            WordCloud(document.getElementById('word-cloud-chart'), { list: wordsData, hover: wordHover} );
         }
 
         /* End of Word Cloud */
