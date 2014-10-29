@@ -234,15 +234,15 @@
         </div>
         <!-- END WORD CLOUDS -->
                 
-            <!-- COMMUNITY -->
-            <div ng-show="currentProject.config.community" class="row">
-                <div class="panel panel-default">
+        <!-- COMMUNITY -->
+        <div ng-show="currentProject.config.community">
+            <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Análisis Comunidades</h3>
                 </div>
                 <div class="panel-body table-responsive">
                     <div class="col-sm-6">
-                        <img style="width:500px" src="../communities.png"/>
+                        <img class="img-responsive" src="../communities.png"/>
                     </div>
                     <div class="col-sm-6">
                         <div class="panel-heading"><label>Sub-red 04/05/2014 {expdem}</label>
@@ -251,48 +251,49 @@
                         <div class="panel-heading"><label>Sub-red 15/06/2014 {expdem}</label>
                         </div>
                         <div class="col-sm-9" id="community2"></div>
+                    </div>
                 </div>
             </div>
-            <!-- END COMMUNITY -->
+        </div>
+        <!-- END COMMUNITY -->
 
-            <!-- EXTRA -->
-            <div ng-show="currentProject.config.extra" class="row">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Extra</h3>
-                    </div>
-                    <div class="panel-body table-responsive">
+        <!-- EXTRA -->
+        <div ng-show="currentProject.config.extra">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Extra</h3>
+                </div>
+                <div class="panel-body table-responsive">
                     <div class="col-sm-5">
-                    <div class="panel-heading">
                         <form class="navbar-form navbar-left" ng-submit="getTweetsByUser()">
-                            <div class="input-group" style="margin-top:-20px">
-                                <input type="text" ng-model="currentuser" placeholder="nombre de usuario" class="form-control">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default" type="submit">Buscar Tweets</button>
-                                    </span>
+                            <div class="input-group">
+                                <input type="text" ng-model="currentuser" placeholder="nombre de usuario" class="form-control"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">Buscar Tweets</button>
+                                </span>
                             </div>
                         </form>
-                        <table ng-if="filteredCurrentTweets" class="table">
-                            <tr ng-repeat="t in filteredCurrentTweets">
-                                <td>{{t.text}}</td>
-                            </tr>
-                        </table>
-                        <div class="row" ng-if="filteredCurrentTweets">
-                            <pagination total-items="ctTotalItems" ng-model="ctCurrentPage" max-size="ctMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="ctNumPages" ng-change="ctPageChanged(ctCurrentPage)" items-per-page="ctItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
-                            <pre>Página: {{ctCurrentPage}} / {{ctNumPages}}</pre>
-                        </div>
+                        
                     </div>
-                </div>
+
+                    <table ng-if="filteredCurrentTweets" class="table">
+                        <tr ng-repeat="t in filteredCurrentTweets">
+                            <td>{{t.text}}</td>
+                        </tr>
+                    </table>
+                    <div ng-if="filteredCurrentTweets">
+                        <pagination total-items="ctTotalItems" ng-model="ctCurrentPage" max-size="ctMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="ctNumPages" ng-change="ctPageChanged(ctCurrentPage)" items-per-page="ctItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
+                        <pre>Página: {{ctCurrentPage}} / {{ctNumPages}}</pre>
+                    </div>
         
-                <div class="col-sm-5">
-                    <div class="row">
+                    <div class="col-sm-5">
                         <div class="panel-heading">
-                        Mostrar Ranking Tweeteros
-                        <input id='rank' ng-model='checkRankingTweeteros'  ng-change='getRankingTweeteros()' type = 'checkbox' />
+                            Mostrar Ranking Tweeteros
+                            <input id='rank' ng-model='checkRankingTweeteros'  ng-change='getRankingTweeteros()' type = 'checkbox' />
                         </div>
                     </div>
 
-                    <div class="row" ng-if="checkRankingTweeteros">
+                    <div ng-if="checkRankingTweeteros">
                         <table class="table">
                             <th>Usuario</th>
                             <th>Núm.Tweets</th>
@@ -301,23 +302,19 @@
                                 <td>{{t.count}}</td>
                             </tr>
                         </table>
-                        <div class="row">
-                            <pagination total-items="tpuTotalItems" ng-model="tpuCurrentPage" max-size="tpuMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="tpuNumPages" ng-change="tpuPageChanged(tpuCurrentPage)" items-per-page="tpuItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
-                            <pre>Página: {{tpuCurrentPage}} / {{tpuNumPages}}</pre>
-                        </div>
+                        <pagination total-items="tpuTotalItems" ng-model="tpuCurrentPage" max-size="tpuMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="tpuNumPages" ng-change="tpuPageChanged(tpuCurrentPage)" items-per-page="tpuItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
+                        <pre>Página: {{tpuCurrentPage}} / {{tpuNumPages}}</pre>
                     </div>
                 </div>
             </div>
-            <!-- END EXTRA -->
-
-            </div>
+        </div>
+        <!-- END EXTRA -->
 
 		<div class="text-center text-muted">
 			<p>A demo by <a href="http://guiem.info">guiem</a>.</p>
 		</div>
 
 	</div>
-
 </div>
 <script src="js/charts/graph.js"></script>
 <script src="js/charts/graph2.js"></script>
