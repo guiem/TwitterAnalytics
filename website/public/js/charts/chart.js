@@ -1,6 +1,9 @@
 var svg = d3.select("#max-twitters-chart")
 .append("svg")
-.attr("width", window.innerWidth).attr("height",400)
+.attr("width", 900)
+.attr("height", 400)
+.attr('viewBox','0 0 '+Math.min(width,height)+' '+Math.min(width,height))
+.attr('preserveAspectRatio','xMinYMin')
 .append("g")
 
 svg.append("g")
@@ -10,7 +13,7 @@ svg.append("g")
 svg.append("g")
 .attr("class", "lines");
 
-var width = 650,
+var width = 900,
 height = 400,
 radius = Math.min(width, height) / 2;
 
@@ -29,6 +32,8 @@ var outerArc = d3.svg.arc()
 .outerRadius(radius * 0.9);
 
 svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+//svg.attr("transform", "translate(" + Math.min(width,height) / 2 + "," + Math.min(width,height) / 2 + ")");
+
 
 var key = function(d){ return d.data.label; };
 
