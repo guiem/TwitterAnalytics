@@ -524,6 +524,8 @@ if (!window.clearImmediate) {
 
       fcanvas.setAttribute('width', width);
       fcanvas.setAttribute('height', height);
+      fcanvas.setAttribute('viewBox','0 0 '+Math.min(width,height)+' '+Math.min(width,height));
+      fcanvas.setAttribute('preserveAspectRatio','xMinYMin');
 
       if (debug) {
         // Attach fcanvas to the DOM
