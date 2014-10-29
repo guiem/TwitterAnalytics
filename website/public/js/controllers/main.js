@@ -251,9 +251,9 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             var res = '';
             if (item != undefined){
                 if (item[2] > 1)
-                    res = "<strong>"+item[0]+"</strong>"+" aparece <strong>"+item[2]+"</strong> veces";
+                    res = "<span class='alert alert-info'><strong>"+item[0]+"</strong>"+" aparece <strong>"+item[2]+"</strong> veces</span>";
                 else
-                    res = "<strong>"+item[0]+"</strong>"+" aparece <strong>"+item[2]+"</strong> vez";
+                    res = "<span class='alert alert-info'><strong>"+item[0]+"</strong>"+" aparece <strong>"+item[2]+"</strong> vez</span>";
             }
             document.getElementById("word-info").innerHTML = res;
         }

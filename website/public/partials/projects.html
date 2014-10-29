@@ -176,61 +176,65 @@
         </div>
         <!-- END TOP TWEETERS -->
 
-            <!-- WORD CLOUDS -->
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Nubes</h3>
-                    </div>
-                    <div class="panel-body table-responsive">
-                        <div class="col-sm-2">
-                            <div class="navbar-form navbar-left" role="search">
-                                <div class="form-group">
-                                    <section class="tab" ng-controller="TabController as tab">
-                                        <ul class="nav nav-pills">
-                                            <li ng-class="{ active: tab.isSet(1) }">
-                                                <a href ng-click="tab.setTab(1)">Palabras</a></li>
-                                            <li ng-class="{ active: tab.isSet(2) }">
-                                                <a href ng-click="tab.setTab(2)">Hashtags</a></li>
-                                        </ul>
-                                        <div ng-show="tab.isSet(1)">
-                                            <input id="max-words" type="text" class="form-control" ng-model="$parent.maxWords" size="1" placeholder="50">
-                                            <input ng-model='$parent.wordsReal' type = 'checkbox'>Proporción Real</input>
-                                            <input ng-model='$parent.showBlackList' type = 'checkbox'> Filtro</input>
-                                            <label ng-show="$parent.showBlackList">Filtro fijo no modificable</label>
-                                            <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="$parent.fixedBlackList"> </textarea>
-                                            <label ng-show="showBlackList">Filtro modificable</label>
-                                            <textarea ng-show="showBlackList" class="form-control" ng-model="$parent.blackList"> </textarea>
-                                            <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></span></button>
-                                            <div class="row">
-                                                <div class="col-sm-1"></div>
-                                                <div class="col-sm-6">
-                                                    <canvas id="word-cloud-chart" width="900" height="400"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div ng-show="tab.isSet(2)">
-                                            <div class="row">
-                                                <div class="col-sm-4">
-                                                    <input id="max-hashtags" type="text" class="form-control" ng-model="$parent.maxHashTags"  size="1" placeholder="50">
-                                                    <input ng-model='$parent.hashReal' type = 'checkbox'>Proporción Real</input>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-1"></div>
-                                                <div class="col-sm-6">
-                                                    <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </section>
-                                    <span id="word-info"></span>
+        <!-- WORD CLOUDS -->
+        <div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Nubes</h3>
+                </div>
+                <div class="panel-body table-responsive">
+                    <section class="tab" ng-controller="TabController as tab">
+                        <ul class="nav nav-pills">
+                            <li ng-class="{ active: tab.isSet(1) }">
+                                <a href ng-click="tab.setTab(1)">Palabras</a>
+                            </li>
+                            <li ng-class="{ active: tab.isSet(2) }">
+                                <a href ng-click="tab.setTab(2)">Hashtags</a>
+                            </li>
+                            <li>
+                                <a href="#"><span id="word-info"></span></a>
+                            </li>
+                        </ul>
+                        <br/>
+                        <div ng-show="tab.isSet(1)">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input id="max-words" type="text" class="form-control" ng-model="$parent.maxWords" size="1" placeholder="50">
+                                </div>
+                            </div>
+                            <input ng-model='$parent.wordsReal' type = 'checkbox'>Proporción Real</input>
+                            <input ng-model='$parent.showBlackList' type = 'checkbox'> Filtro</input>
+                            <label ng-show="$parent.showBlackList">Filtro fijo no modificable</label>
+                            <textarea ng-show="showBlackList" class="form-control" disabled="disabled" ng-model="$parent.fixedBlackList"> </textarea>
+                            <label ng-show="showBlackList">Filtro modificable</label>
+                            <textarea ng-show="showBlackList" class="form-control" ng-model="$parent.blackList"> </textarea>
+                            <button ng-if="showBlackList" class="btn btn-default" ng-click="getNGramsUpdate()"><span class="glyphicon glyphicon-refresh"></span></button>
+                            <div class="row">
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-6">
+                                    <canvas id="word-cloud-chart" width="900" height="400"></canvas>
                                 </div>
                             </div>
                         </div>
+                        <div ng-show="tab.isSet(2)">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <input id="max-hashtags" type="text" class="form-control" ng-model="$parent.maxHashTags"  size="1" placeholder="50">
+                                </div>
+                            </div>
+                            <input ng-model='$parent.hashReal' type = 'checkbox'>Proporción Real</input>
+                            <div class="row">
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-6">
+                                    <canvas id="word-cloud-chart-hashtags" width="900" height="400"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
-            <!-- END WORD CLOUDS -->
+        </div>
+        <!-- END WORD CLOUDS -->
                 
             <!-- COMMUNITY -->
             <div ng-show="currentProject.config.community" class="row">
