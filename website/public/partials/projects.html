@@ -38,7 +38,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Actividad Usuarios</h3>
             </div>
-            <div class="panel-body">
+            <div class="panel-body table-responsive">
                 
                 <!-- TWEETS TIME -->
                 <div ng-show="currentProject.config.tweets_time" class="row">
@@ -71,16 +71,18 @@
                                         </span>
                                         </p>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <button class="btn btn-default" ng-click="getTweetsPerDay()">Generar gráfico</button>
+                                        <loading elem="load_plot"></loading>
                                     </div>
                                     <div class="col-md-3">
                                         Mostrar Tweets en rango
                                         <input id='box' ng-model='checkTweetsGap'  ng-change='getTweetsInGap()' type = 'checkbox' />
+                                        <loading elem="load_tweets"></loading>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-10" ng-if="checkTweetsGap">
+
+                                    <div class="row" ng-if="checkTweetsGap">
                                         <div class="panel-heading"><label>Tweets en Rango Fechas : {{tfTotalItems}}</label>
                                         </div>
                                         
@@ -96,13 +98,10 @@
                                             </tr>
                                         </table>
                                         
-                                        <div class="row">
-                                            <pagination total-items="tfTotalItems" ng-model="tfCurrentPage" max-size="tfMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="tfNumPages" ng-change="tfPageChanged(tfCurrentPage)" items-per-page="tfItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
-                                            <pre>Página: {{tfCurrentPage}} / {{tfNumPages}}</pre>
-                                        </div>
+                                        <pagination total-items="tfTotalItems" ng-model="tfCurrentPage" max-size="tfMaxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="tfNumPages" ng-change="tfPageChanged(tfCurrentPage)" items-per-page="tfItemsPerPage" previous-text="«" next-text="»" first-text="Primero" last-text="Último"></pagination>
+                                        <pre>Página: {{tfCurrentPage}} / {{tfNumPages}}</pre>
                                         
                                     </div>
-                                </div>
 
                                 <div class="row">
                                     <div id="tweets-per-day-chart"></div>
@@ -126,14 +125,15 @@
                                 <div class="col-sm-12">
                                     <form class="navbar-form navbar-left" ng-submit="addTerm()">
                                         <div class="input-group">
-                                                <span class="input-group-btn">
-                                                    <input type="text" ng-model="termText" placeholder="añade núevo concepto" class="form-control">
-                                                    <input type="text" ng-model="userTerms" placeholder="usuario (opcional)" class="form-control">
-                                                    <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-plus"></span></button>
-                                                    <button type="button" class="btn btn-default" ng-click="clearTerms()"><i class="glyphicon glyphicon-remove"></i></button>
-                                                    <button type="button" class="btn btn-default" ng-click="searchTerms()">OR <i class="glyphicon glyphicon-search"></i></button>
-                                                    <button type="button" class="btn btn-default" ng-click="searchTermsAnd()">AND <i class="glyphicon glyphicon-search"></i></button>
-                                                </span>
+                                            <span class="input-group-btn">
+                                                <input type="text" ng-model="termText" placeholder="añade núevo concepto" class="form-control">
+                                                <input type="text" ng-model="userTerms" placeholder="usuario (opcional)" class="form-control">
+                                                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-plus"></span></button>
+                                                <button type="button" class="btn btn-default" ng-click="clearTerms()"><i class="glyphicon glyphicon-remove"></i></button>
+                                                <button type="button" class="btn btn-default" ng-click="searchTerms()">OR <i class="glyphicon glyphicon-search"></i></button>
+                                                <button type="button" class="btn btn-default" ng-click="searchTermsAnd()">AND <i class="glyphicon glyphicon-search"></i></button>
+                                                <loading elem="filter_terms"></loading>
+                                            </span>
                                         </div>
                                     </form>
                                 </div>
@@ -153,7 +153,6 @@
                             
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <loading></loading>
                                     <table ng-if="filteredTweetsTerms" class="table">
                                         <th>Usuario</th>
                                         <th>Tweet</th>

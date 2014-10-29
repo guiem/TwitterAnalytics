@@ -171,8 +171,9 @@ module.exports = function(app) {
         .sort('-created_at_dt')
         .exec(function(err,tweets){
             if (err)
-                res.send(err);
-            res.json(tweets);
+                res.send(err.message);
+            else
+                res.json(tweets);
         });
     });
 

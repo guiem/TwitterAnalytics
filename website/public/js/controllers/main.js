@@ -176,6 +176,9 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
             if(!$scope.checkTweetsGap){
                 return;
             }
+            $scope.load_tweets = {};
+            $scope.load_tweets.loading = true;
+            console.log($scope.dtStart);console.log($scope.dtEnd);
             Tweets.getInGap($scope.currentProject.name,$filter('date')($scope.dtStart,'yyyy-MM-dd'),$filter('date')($scope.dtEnd,'yyyy-MM-dd'))
             .then(function(data) {
                 $scope.tweetsingap = data;
@@ -184,6 +187,7 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
                 $scope.tfItemsPerPage = 6;
                 $scope.tfMaxSize = 5;
                 updateTweetsInGapPaging();
+                $scope.load_tweets.loading = false;
             });
         };
 
@@ -191,15 +195,19 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
         $scope.getTweetsPerDay = function() {
             var ini = $filter('date')($scope.dtStart,'yyyy-MM-dd');
             var end = $filter('date')($scope.dtEnd,'yyyy-MM-dd');
+            $scope.load_plot = {};
+            $scope.load_plot.loading = true;
             Tweets.getPerDay($scope.currentProject.name,ini,end)
             .success(function(data) {
                 $scope.tweetsperday = data;
                 drawTweetsPerDay();
+                $scope.load_plot.loading = false;
             });
         };
 
         $scope.searchTerms = function(mode) {
-            $scope.loading = true;
+            $scope.filter_terms = {};
+            $scope.filter_terms.loading = true;
             Tweets.tweetsByTerm($scope.currentProject.name,$scope.userTerms,$scope.terms,mode)
             .then(function(data) {
                   $scope.tweetsterms = data;
@@ -208,7 +216,7 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
                   $scope.ttItemsPerPage = 6;
                   $scope.ttMaxSize = 5;
                   updateTweetsTermsPaging();
-                  $scope.loading = false;
+                  $scope.filter_terms.loading = false;
             });
         };
 
@@ -503,27 +511,25 @@ angular.module('visualizationController', ['ui.bootstrap','general-directives'])
         }
         // end current tweets per user
                 
-                // current tweets term
-                $scope.filteredTweetsTerms= []
-                
-                $scope.ttPageChanged = function(ttCurrentPage) {
-                $scope.ttCurrentPage = ttCurrentPage;
-                updateTweetsTermsPaging();
-                };
-                
-                function updateTweetsTermsPaging(){
-                var begin = (($scope.ttCurrentPage - 1) * $scope.ttItemsPerPage)
-                , end = begin + $scope.ttItemsPerPage;
-                $scope.filteredTweetsTerms = $scope.tweetsterms.slice(begin, end);
-                }
-                // end current tweets per terms
+        // current tweets term
+        $scope.filteredTweetsTerms= []
+        
+        $scope.ttPageChanged = function(ttCurrentPage) {
+            $scope.ttCurrentPage = ttCurrentPage;
+            updateTweetsTermsPaging();
+        };
+        
+        function updateTweetsTermsPaging(){
+            console.log($scope.tweetsterms);
+            var begin = (($scope.ttCurrentPage - 1) * $scope.ttItemsPerPage), end = begin + $scope.ttItemsPerPage;
+            $scope.filteredTweetsTerms = $scope.tweetsterms.slice(begin, end);
+        }
+        // end current tweets per terms
                 
         $scope.formatText = function(text) {
             var aux_text = text;
             angular.forEach($scope.terms, function(term) {
-                console.log(term);
                 var query = '/'+term+'/gi';
-                console.log(query);
                 aux_text = aux_text.replace(eval(query), '<strong style="color:#428bca">'+term+'</strong>');
             });
             return $sce.trustAsHtml(aux_text);
