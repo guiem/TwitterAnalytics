@@ -2,24 +2,39 @@
 
 Usage: 
     playground.py (dumpdb|restoredb) --path PATH
+    playground.py checkhashtags [--nhs=<hs>]
     playground.py (-h | --help) 
 
 Options:
     -h --help    Show this screen.
     --path PAHT  Specify absolute output path in dump, src FILEPATH in restore.
+    --nhs=<hs> Num tweets with hashtag [default: 5].
 
 """
 from docopt import docopt
-
-
 from twitter import *
 from settings import *
 import pymongo
 import datetime
 import time
 
-
-
+def checkhashtags(num_hashtags):
+    nhs = int(num_hashtags) or 5
+    connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
+    db=connection.twitter
+    tweets = db.tweets
+    tweets_hash = 0
+    for tweet in tweets.find({"twitteranalytics_project_id":PROJECT_ID}):
+        if 'entities' in tweet.keys() and tweet['entities']:
+            if tweet['entities']['hashtags']:
+                tweets_hash += 1
+                print '------------------------------------------------------------'
+            for entity in tweet['entities']['hashtags']:
+                entity = entity['text'].encode('utf-8')
+                print 'HASH:',entity,'|','TWEET:',tweet['text'].encode('utf-8')
+        if tweets_hash == nhs:
+            break
+        
 def dumpdb(path):
     print 'Dumping database...'
     os.system('mongodump --db twitter')
@@ -50,5 +65,7 @@ if __name__ == "__main__":
         dumpdb(arguments['--path'])
     elif arguments['restoredb']:
         restoredb(arguments['--path'])
+    elif arguments['checkhashtags']:
+        checkhashtags(arguments['--nhs'])
 
 
