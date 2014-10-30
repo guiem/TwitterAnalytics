@@ -44,11 +44,13 @@ def checkhashtags(num_hashtags):
 def listhashtags(num_hashtags, filepath):
     nhs = int(num_hashtags) if num_hashtags != 'all' else 'all'
     db_con = DBConnection()
-    f = open(filepath,'w').write('HASHTAG;NÚM.;USUARIOS\n').close()
-    f.open(filepath,'a')
+    f = open(filepath,'w')
+    f.write('HASHTAG;NUM.;USUARIOS\n')
+    f.close()
+    f = open(filepath,'a')
     num_hash = 0
     for hash in db_con.hashtags.find({"twitteranalytics_project_id":'guiem_df'}).sort('count',-1):
-        row = '{0};{1}\n'.format(hash['hashtag'].encode('utf-8'),hash['count'])
+        row = '{0};{1};{2}\n'.format(hash['hashtag'].encode('utf-8'),hash['count'],(' , ').join(hash['users']))
         print row
         f.write(row)
         num_hash += 1
