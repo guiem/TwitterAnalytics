@@ -3,14 +3,14 @@
 Usage: 
     playground.py (dumpdb|restoredb) --path PATH
     playground.py checkhashtags [--nhs=<hs>]
-    playground.py listhashtags [--nhl=<n>]
+    playground.py listhashtags --path PATH [--nhl=<n>]
     playground.py (-h | --help) 
 
 Options:
     -h --help    Show this screen.
     --path PAHT  Specify absolute output path in dump, src FILEPATH in restore.
-    --nhs=<hs> Num tweets with hashtag [default: 5].
-    --nhl=<nl> 
+    --nhs=<hs>   Num tweets with hashtag [default: 5].
+    --nhl=<nl>   Num hashtags to list [default: all].
 """
 from docopt import docopt
 from twitter import *
@@ -24,12 +24,13 @@ class DBConnection():
         self.connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
         self.db = self.connection.twitter
         self.tweets = self.db.tweets
+        self.hashtags = self.db.hashtags
 
 def checkhashtags(num_hashtags):
-    nhs = int(num_hashtags) if num_hashtags else 5
-    con = DBConnection()
+    nhs = int(num_hashtags)
+    db_con = DBConnection()
     tweets_hash = 0
-    for tweet in con.tweets.find({"twitteranalytics_project_id":PROJECT_ID}):
+    for tweet in db_con.tweets.find({"twitteranalytics_project_id":PROJECT_ID}):
         if 'entities' in tweet.keys() and tweet['entities']:
             if tweet['entities']['hashtags']:
                 tweets_hash += 1
@@ -39,6 +40,20 @@ def checkhashtags(num_hashtags):
                 print 'HASH:',entity,'|','TWEET:',tweet['text'].encode('utf-8')
         if tweets_hash == nhs:
             break
+
+def listhashtags(num_hashtags, filepath):
+    nhs = int(num_hashtags) if num_hashtags != 'all' else 'all'
+    db_con = DBConnection()
+    f = open(filepath,'a')
+    num_hash = 0
+    for hash in db_con.hashtags.find({"twitteranalytics_project_id":'guiem_df'}).sort('count',-1):
+        row = '{0};{1}\n'.format(hash['hashtag'].encode('utf-8'),hash['count'])
+        print row
+        f.write(row)
+        num_hash += 1
+        if nhs != 'all' and num_hash == nhs:
+            break
+    f.close()
         
 def dumpdb(path):
     print 'Dumping database...'
@@ -72,5 +87,7 @@ if __name__ == "__main__":
         restoredb(arguments['--path'])
     elif arguments['checkhashtags']:
         checkhashtags(arguments['--nhs'])
+    elif arguments['listhashtags']:
+        listhashtags(arguments['--nhl'],arguments['--path'])
 
 
