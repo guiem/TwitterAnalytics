@@ -19,7 +19,7 @@ import datetime
 import time
 
 def checkhashtags(num_hashtags):
-    nhs = int(num_hashtags) or 5
+    nhs = int(num_hashtags) if num_hashtags else 5
     connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)
     db=connection.twitter
     tweets = db.tweets
