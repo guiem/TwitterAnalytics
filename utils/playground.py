@@ -71,8 +71,9 @@ def hashtagsgraph(num_hashtags, filepath):
     edges_end = """</edges>"""
     nodes = []
     edges = []
+    hashes = hash_dict.keys()
     for hash in hash_dict:
-        node = """<node id="{0}" label="{0}"/>""".format(hash)
+        node = """<node id="{0}" label="{0}"><viz:color r="239" g="173" b="66" a="0.6"/></node>""".format(hash)
         if node not in nodes:
             nodes.append(node)
         for user in hash_dict[hash]['users']:
