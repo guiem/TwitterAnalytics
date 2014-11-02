@@ -18,6 +18,7 @@ from settings import *
 import pymongo
 import datetime
 import time
+from collections import OrderedDict
 
 class DBConnection():
     def __init__(self):
@@ -41,21 +42,32 @@ def checkhashtags(num_hashtags):
         if tweets_hash == nhs:
             break
 
-def listhashtags(num_hashtags, filepath):
+def _get_hashtags_users(num_hashtags):
     nhs = int(num_hashtags) if num_hashtags != 'all' else 'all'
     db_con = DBConnection()
+    num_hash = 1
+    res = OrderedDict()
+    for hash in db_con.hashtags.find({"twitteranalytics_project_id":'guiem_df'}).sort('count',-1):
+        res[hash['hashtag'].encode('utf-8')] = {'count':hash['count'],'users':hash['users']}
+        if nhs != 'all' and num_hash == nhs:
+            break
+        num_hash += 1
+    return res
+
+def hashtagsgraph():
+    pass
+
+def listhashtags(num_hashtags, filepath):
+    hash_dict = _get_hashtags_users(num_hashtags)
+    print hash_dict
     f = open(filepath,'w')
     f.write('HASHTAG;NUM.;USUARIOS\n')
     f.close()
     f = open(filepath,'a')
-    num_hash = 0
-    for hash in db_con.hashtags.find({"twitteranalytics_project_id":'guiem_df'}).sort('count',-1):
-        row = '{0};{1};{2}\n'.format(hash['hashtag'].encode('utf-8'),hash['count'],(' , ').join(hash['users']))
-        print row
-        f.write(row)
-        num_hash += 1
-        if nhs != 'all' and num_hash == nhs:
-            break
+    for hash in hash_dict:
+        print hash
+        row = '{0};{1};{2}\n'.format(hash,hash_dict[hash]['count'],(' , ').join(hash_dict[hash]['users']))
+        f.write(row)        
     f.close()
         
 def dumpdb(path):
