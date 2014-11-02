@@ -4,6 +4,7 @@ Usage:
     playground.py (dumpdb|restoredb) --path PATH
     playground.py checkhashtags [--nhs=<hs>]
     playground.py listhashtags --path PATH [--nhl=<n>]
+    playground.py hashtagsgraph --path PATH [--nhl=<n>]
     playground.py (-h | --help) 
 
 Options:
@@ -55,19 +56,16 @@ def _get_hashtags_users(num_hashtags):
     return res
 
 def hashtagsgraph():
+    hash_dict = _get_hashtags_users(num_hashtags)
     pass
 
 def listhashtags(num_hashtags, filepath):
     hash_dict = _get_hashtags_users(num_hashtags)
-    print hash_dict
     f = open(filepath,'w')
-    f.write('HASHTAG;NUM.;USUARIOS\n')
-    f.close()
-    f = open(filepath,'a')
+    res = 'HASHTAG;NUM.;USUARIOS\n'
     for hash in hash_dict:
-        print hash
-        row = '{0};{1};{2}\n'.format(hash,hash_dict[hash]['count'],(' , ').join(hash_dict[hash]['users']))
-        f.write(row)        
+        res += '{0};{1};{2}\n'.format(hash,hash_dict[hash]['count'],(' , ').join(hash_dict[hash]['users']))
+    f.write(res)        
     f.close()
         
 def dumpdb(path):
@@ -104,5 +102,7 @@ if __name__ == "__main__":
         checkhashtags(arguments['--nhs'])
     elif arguments['listhashtags']:
         listhashtags(arguments['--nhl'],arguments['--path'])
+    elif arguments['hashtagsgraph']:
+        hashtagsgraph(arguments['--nhl'],arguments['--path'])
 
 
