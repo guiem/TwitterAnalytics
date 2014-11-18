@@ -1,8 +1,9 @@
 
-"""Usage: users_community.py -f FILE
+"""Usage: users_community.py [--pickle] -f FILE 
 
 Options:
-    -f sets file name
+-f sets file name
+--pickle  forces using only picke
 """
 
 import tweepy
@@ -27,14 +28,6 @@ class Community():
         self.api = api
         self.users_list = users_list 
         self.community = self._load()
-        if not self.community or len(self.community) != len(users_list):
-            aux_res = self._get_ids_names()
-            if len(self.community) != len(users_list):
-                for u_id in aux_res.keys():
-                    if u_id not in self.community.keys():
-                        self.community[u_id] = aux_res[u_id]
-            else:
-                self.community = aux_res
   
     def _get_ids_names(self):
         res = {}
@@ -77,28 +70,37 @@ class Community():
         else:
             return False
 
-    def build_community(self):
-        count = 1
-        for key,value in self.community.iteritems():
-            print "Processing {0}'s friends list: {1} of {2}.".format(value['screen_name'],count,len(self.community))
-            if not 'friends' in self.community[key].keys():
-                limit_status = self.api.rate_limit_status()['resources']['friends']['/friends/ids']
-                sleep = needs_sleep(limit_status['remaining'],limit_status['reset'])
-                if sleep:
-                    print 'Sleeping {0} seconds to avoid reaching rate limit.'.format(sleep)
-                    time.sleep(sleep)
-                try:
-                    friends = self.api.friends_ids(value['screen_name'])
-                    self.community[key]['friends'] = list(set(friends).intersection(set(self.community.keys())))
-                    self._save()
-                except TweepError as e:
-                    self.community[key]['friends'] = False # to avoid trying to process it again
-                    f = open('users_community.log','a')
-                    f.write(value['screen_name']+' ' + str(datetime.datetime.now()) + str(e)+'\n')
-                    f.close()
-            else:
-                print 'User already loaded from pickle.'
-            count += 1
+    def build_community(self, force_pickle = False):
+        if not force_pickle:
+            if not self.community or len(self.community) != len(self.users_list):
+                aux_res = self._get_ids_names()
+                if len(self.community) != len(users_list):
+                    for u_id in aux_res.keys():
+                        if u_id not in self.community.keys():
+                            self.community[u_id] = aux_res[u_id]
+                else:
+                    self.community = aux_res
+            count = 1
+            for key,value in self.community.iteritems():
+                print "Processing {0}'s friends list: {1} of {2}.".format(value['screen_name'],count,len(self.community))
+                if not 'friends' in self.community[key].keys():
+                    limit_status = self.api.rate_limit_status()['resources']['friends']['/friends/ids']
+                    sleep = needs_sleep(limit_status['remaining'],limit_status['reset'])
+                    if sleep:
+                        print 'Sleeping {0} seconds to avoid reaching rate limit.'.format(sleep)
+                        time.sleep(sleep)
+                    try:
+                        friends = self.api.friends_ids(value['screen_name'])
+                        self.community[key]['friends'] = list(set(friends).intersection(set(self.community.keys())))
+                        self._save()
+                    except TweepError as e:
+                        self.community[key]['friends'] = False # to avoid trying to process it again
+                        f = open('users_community.log','a')
+                        f.write(value['screen_name']+' ' + str(datetime.datetime.now()) + str(e)+'\n')
+                        f.close()
+                else:
+                    print 'User already loaded from pickle.'
+                count += 1
         print self.community
 
 if __name__ == "__main__":
@@ -109,4 +111,5 @@ if __name__ == "__main__":
             for user in f.readlines():
                 u.append(user.split('\n')[0])
     c = Community(api,u)
-    c.build_community()
+    c.build_community(args['--pickle'])
+
