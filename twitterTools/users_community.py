@@ -70,6 +70,38 @@ class Community():
         else:
             return False
 
+    def export_2_gephi(self):
+        main_start = """
+        <gexf xmlns="http://www.gexf.net/1.2draft" xmlns:viz="http://www.gexf.net/1.2draft/viz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+            <creator>Guiem</creator>
+            <description>from TwitterAnalytics</description>
+        """
+        main_end = """</gexf>"""
+        graph_start = """<graph mode="static" defaultedgetype="directed">"""
+        graph_end = """</graph>"""
+        nodes_start = """<nodes>"""
+        nodes_end = """</nodes>"""
+        edges_start = """<edges>"""
+        edges_end = """</edges>"""
+        nodes = []
+        edges = []
+        for u_id in self.community:
+            node = """<node id="{0}" label="{1}"/>""".format(u_id,self.community[u_id]['screen_name'])
+            if node not in nodes:
+                nodes.append(node)
+            if self.community[u_id]['friends']:
+                for sub_u_id in self.community[u_id]['friends']:
+                    sub_node = """<node id="{0}" label="{0}"/>""".format(sub_u_id,self.community[sub_u_id]['screen_name'])
+                    if sub_node not in nodes:
+                        nodes.append(sub_node)
+                    edge = """<edge id="{0}-{1}" source="{0}" target="{1}"/>""".format(sub_u_id, u_id)
+                    if edge not in edges:
+                        edges.append(edge)   
+        res = main_start+graph_start+nodes_start+('').join(nodes)+nodes_end+edges_start+('').join(edges)+edges_end+graph_end+main_end
+        f = open('gephi_community.gexf','w')
+        f.write(res)        
+        f.close()
+
     def build_community(self, force_pickle = False):
         if not force_pickle:
             if not self.community or len(self.community) != len(self.users_list):
@@ -101,7 +133,8 @@ class Community():
                 else:
                     print 'User already loaded from pickle.'
                 count += 1
-        print self.community
+        self.export_2_gephi()
+        return True
 
 if __name__ == "__main__":
     args = docopt(__doc__)
