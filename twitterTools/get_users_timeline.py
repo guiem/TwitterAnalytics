@@ -13,10 +13,7 @@ def contains_keywords(tweet_text):
             return True
     return False
 
-t = Twitter(
-            auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET,
-                       CONSUMER_KEY, CONSUMER_SECRET)
-            )
+t = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET,CONSUMER_KEY, CONSUMER_SECRET))
 
 # connect to mongo
 connection = pymongo.Connection("mongodb://{0}".format(DB_URL), safe=True)

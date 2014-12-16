@@ -8,6 +8,7 @@ UPDATE_DB = True
 UPDATE_SRC = False # True if you want to download git's repository last version
 SRC_PATH = '/path/to/remote/server/src'
 GIT_USER = 'git user email only if you plan to update git code'
+MONGO_PORT = 27017
 
 try:
     from settings_local import *

@@ -7,6 +7,8 @@
   "dependencies" : {
     "express"    : "~3.4.4",
     "mongoose"   : "~3.6.2",
-    "angular-route": "~1.2.x"
+    "angular-route": "~1.2.x",
+    "socket.io": "^1.2.0",
+    "twit": "^1.1.18"
   }
 }
