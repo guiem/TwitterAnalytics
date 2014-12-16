@@ -1,0 +1,48 @@
+#:kivy 1.0
+
+<Controller>:
+    label_wid: my_custom_label
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        TextInput:
+            id: my_custom_label
+            font_size: '50sp'
+            size_hint_y: 0.8
+            readonly: True
+            padding:40
+            text: 'TWEETS WILL BE DISPLAYED HERE, ENJOY!'
+
+        BoxLayout:
+            size_hint_y: 0.2
+            orientation: 'horizontal'
+            Button:
+                id: btn_start
+                text: 'Start'
+                on_press: root.do_action()
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Project Name'
+                TextInput:
+                    id: project_input
+                    size_hint_y: None
+                    height: '32dp'
+                    text: ''
+                    focus: True
+                Label:
+                    text: 'Search Terms (comma separated)'
+                TextInput:
+                    id: search_terms
+                    size_hint_y: None
+                    height: '32dp'
+                    text: ''
+                Label:
+                    text: 'Output URL'
+                TextInput:
+                    id: project_output
+                    size_hint_y: None
+                    height: '32dp'
+                    text: ''
+                    readonly: True

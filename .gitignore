@@ -1,5 +1,9 @@
 website/node_modules
 website/config/development.js
+twitterTools/*.pickle
+twitterTools/*.txt
 twitterTools/settings_local.py
+settings_local.py
 utils/settings_local.py
 website/public/js/client_config_local.js
+*.pyc
