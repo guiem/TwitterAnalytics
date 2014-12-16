@@ -3,6 +3,7 @@ var Tweet = require('./models/tweet');
 var Word = require('./models/word');
 var HashTag = require('./models/hashtag');
 var Project = require('./models/project');
+var DynHashtag = require('./models/dynHashtag');
 
 module.exports = function(app) {
 
@@ -207,6 +208,22 @@ module.exports = function(app) {
     });
 
     /* END HASHTAGS */
+
+    /* DYN HASHTAGS */
+    // get num words for DynHashtagCloud
+    app.get('/api/projects/:projectId/dynnhashtags/:numHashTags', function(req, res) {
+        var blackList = [];
+        DynHashtag
+        .find({'twitteranalytics_project_id':req.params.projectId,hashtag:{$nin:blackList}})
+        .limit(req.params.numHashTags)
+        .sort('-count')
+        .exec(function(err,hashtag){
+            if (err)
+                res.send(err);
+            res.json(hashtag);
+        });
+    });
+    /* END DYNHASHTAGS */
 
     /* WORDS */
 

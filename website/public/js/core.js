@@ -1,5 +1,5 @@
 var app = angular.module('TwitterAnalytics', ['visualizationController','userService','tweetService','wordService',
-	,'hashtagService','projectsService','pascalprecht.translate','ngRoute'])
+	,'hashtagService','projectsService','dynamicHashtags','dynHashtagsService','pascalprecht.translate','ngRoute'])
 
 app.config(
   function($routeProvider,$locationProvider) {
@@ -11,6 +11,10 @@ app.config(
       when('/projects/:projectId?', {
         templateUrl: 'partials/projects.html',
         controller: 'MainController'
+      }).
+      when('/dynamic_hashtags', {
+        templateUrl: 'partials/dynamic-hashtags.html',
+        controller: 'DynamicHashtagsCtrl'
       }).
       otherwise({
         redirectTo: '/'
