@@ -1,10 +1,21 @@
-angular.module('dynamicHashtags', [])
+angular.module('dynamicHashtags', ['btford.socket-io'])
+    
+    .factory('socket', function(socketFactory) {
+        return socketFactory({
+            ioSocket: io.connect('http://localhost:8085')
+        });
+    })
 
-	.controller('DynamicHashtagsCtrl', function($scope, $http, $routeParams, DynHashtags) {
+
+	.controller('DynamicHashtagsCtrl', function($scope, $http, $routeParams, DynHashtags, socket) {
 
         /* HASHTAGS */
 
-        updateDynHashtags();
+        socket.on('dyn_hashtags_updated', function () {
+            updateDynHashtags();
+        });
+
+        //updateDynHashtags();
 
         function updateDynHashtags(){ 
         	console.log('entro');
@@ -22,7 +33,7 @@ angular.module('dynamicHashtags', [])
                 maxCount = Math.max(maxCount,res.count); // we know, because it comes in desc order that we'll keep the first value
                 wordsData.push([res.hashtag, res.count*100/maxCount,res.count]);
             });
-            WordCloud(document.getElementById('word-cloud-chart-dynhashtags'), { list: wordsData} );
+            WordCloud(document.getElementById('word-cloud-chart-dynhashtags'), { list: wordsData, shuffle: false, wait: 10000} );
         }
 
         /* END HASHTAGS */
