@@ -1,3 +1,4 @@
+website/config/twitter_vars.js
 website/node_modules
 website/config/development.js
 twitterTools/*.pickle
