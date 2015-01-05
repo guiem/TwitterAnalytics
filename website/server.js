@@ -7,6 +7,7 @@ var mongoose = require('mongoose'); 					// mongoose for mongodb
 var port  	 = process.env.PORT || 8085; 				// set the port
 var database = require('./config/database'); 			// load the database config
 var twitterVars = require('./config/twitter_vars');
+var dynHashtagVars = require('./config/dyn_hashtag_vars');
 //var general_config = require('./config/index');
 
 // configuration ===============================================================
@@ -54,18 +55,31 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
-var trackList = ['hola','diversidad funcional','diversitat funcional','diversidade funcional','dibertsitate funtzionala','diversidadfuncional','diversitatfuncional' ,'diversidadefuncional','dibertsitatefuntzionala']
 var hashtags = {}
 var DynHashtag = require('./app/models/dynHashtag');
-var projectId = 'guiem_df';
-twit.stream('filter',{track:trackList}, function(stream) {
+var lastRestart = dynHashtagVars.lastRestart;
+
+function needsHashtagsRestart(){
+    now = new Date();
+    if ((now - lastRestart)/1000 > dynHashtagVars.restartGapSeconds){
+        lastRestart = now;
+        console.log(lastRestart);
+        return true;
+    }
+    return false;
+};
+
+twit.stream('filter',{track:dynHashtagVars.trackList}, function(stream) {
     stream.on('data', function(data) {
+        if (needsHashtagsRestart()){
+            DynHashtag.find({}).remove();
+        }
         if (data.entities){
             if (data.entities.hashtags) {
                 console.log(data.entities.hashtags);
                 for (i in data.entities.hashtags){
                     hashtag = data.entities.hashtags[i].text;
-                    var query = { 'hashtag': hashtag, 'twitteranalytics_project_id':projectId }
+                    var query = { 'hashtag': hashtag, 'twitteranalytics_project_id':dynHashtagVars.projectId }
                     DynHashtag.findOneAndUpdate(query,{$inc:{ 'count': 1 },$set:{'lastTimeUsed':new Date()}}, {upsert:true} 
                         , function(err, doc){
                             if (err) 
