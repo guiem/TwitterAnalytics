@@ -1,3 +1,7 @@
 <div ng-controller="DynamicHashtagsCtrl">
 	<canvas id="word-cloud-chart-dynhashtags" width="900" height="400"></canvas>
+	<div>
+		<p><strong>Inicio recolección</strong> : {{start | date:'dd/MM/yyyy HH:mm:ss'}}</p>
+		<p><strong>Última actualización</strong> : {{lastRestart | date:'dd/MM/yyyy HH:mm:ss'}}</p>
+	</div>
 </div>  

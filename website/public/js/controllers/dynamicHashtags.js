@@ -9,11 +9,14 @@ angular.module('dynamicHashtags', ['btford.socket-io'])
 
 	.controller('DynamicHashtagsCtrl', function($scope, $http, $routeParams, DynHashtags, socket) {
 
-        socket.on('dyn_hashtags_updated', function () {
+        $scope.lastRestart = '';
+        $scope.start = '';
+
+        socket.on('dyn_hashtags_updated', function (data) {
+            $scope.lastRestart = data.lastRestart;
+            $scope.start = data.start;
             updateDynHashtags();
         });
-
-        //updateDynHashtags();
 
         function updateDynHashtags(){ 
             DynHashtags.getNDynashtags("guiem_df",50)
@@ -32,7 +35,5 @@ angular.module('dynamicHashtags', ['btford.socket-io'])
             });
             WordCloud(document.getElementById('word-cloud-chart-dynhashtags'), { list: wordsData, shuffle: false, wait: 10} );
         }
-
-        /* END HASHTAGS */
         
     });

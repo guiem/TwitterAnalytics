@@ -88,7 +88,7 @@ twit.stream('filter',{track:dynHashtagVars.trackList}, function(stream) {
                     });
                 }
                 if (nbOpenSockets > 0)
-                    io.sockets.emit('dyn_hashtags_updated');
+                    io.sockets.emit('dyn_hashtags_updated',{ lastRestart: lastRestart, start: dynHashtagVars.lastRestart});
                 console.log(nbOpenSockets);
             }
         }
