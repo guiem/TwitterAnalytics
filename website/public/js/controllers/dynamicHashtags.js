@@ -2,7 +2,7 @@ angular.module('dynamicHashtags', ['btford.socket-io'])
     
     .factory('socket', function(socketFactory) {
         return socketFactory({
-            ioSocket: io.connect('http://localhost:8085')
+            ioSocket: io.connect('http://twitteranalytics.ml:8085')
         });
     })
 
