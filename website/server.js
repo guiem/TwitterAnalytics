@@ -27,7 +27,7 @@ require('./app/routes.js')(app);
 server.listen(port);
 console.log("App listening on port " + port);
 
-var util = require('util'), twitter = require('twitter');
+var util = require('util'), twitter = require('twitter'); // https://github.com/desmondmorris/node-twitter
 var twit = new twitter({
     consumer_key: twitterVars.consumer_key,
     consumer_secret: twitterVars.consumer_secret,
