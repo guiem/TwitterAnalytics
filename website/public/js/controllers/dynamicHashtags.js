@@ -9,8 +9,9 @@ angular.module('dynamicHashtags', ['btford.socket-io'])
 
 	.controller('DynamicHashtagsCtrl', function($scope, $http, $routeParams, DynHashtags, socket) {
 
-        $scope.lastRestart = '';
-        $scope.start = '';
+        $scope.lastRestart = 'Se actualizará al llegar un nuevo hashtag';
+        $scope.start = 'Lunes de la semana actual';
+        updateDynHashtags();
 
         socket.on('dyn_hashtags_updated', function (data) {
             $scope.lastRestart = data.lastRestart;
